@@ -1,0 +1,51 @@
+created:
+    - database/factories/UserFactory.php
+    - database/factories/OrganizationFactory.php
+    - database/factories/SportFactory.php
+    - database/factories/CoachFactory.php
+    - database/factories/CoachSportFactory.php
+    - database/factories/AvailabilitySlotFactory.php
+    - database/factories/SpecificAvailabilityFactory.php
+    - database/factories/TrainingClassFactory.php
+    - database/factories/BookingFactory.php
+    - database/factories/PaymentFactory.php
+    - database/factories/ReviewFactory.php
+    - database/factories/GroupInterestFactory.php
+    - database/migrations/2025_05_11_011557_create_users_table.php
+    - database/migrations/2025_05_11_011558_create_organizations_table.php
+    - database/migrations/2025_05_11_011559_create_sports_table.php
+    - database/migrations/2025_05_11_011600_create_coaches_table.php
+    - database/migrations/2025_05_11_011601_create_coach_sports_table.php
+    - database/migrations/2025_05_11_011602_create_availability_slots_table.php
+    - database/migrations/2025_05_11_011603_create_specific_availabilities_table.php
+    - database/migrations/2025_05_11_011604_create_training_classes_table.php
+    - database/migrations/2025_05_11_011605_create_bookings_table.php
+    - database/migrations/2025_05_11_011606_create_payments_table.php
+    - database/migrations/2025_05_11_011607_create_reviews_table.php
+    - database/migrations/2025_05_11_011608_create_group_interests_table.php
+    - app/Models/User.php
+    - app/Models/Organization.php
+    - app/Models/Sport.php
+    - app/Models/Coach.php
+    - app/Models/CoachSport.php
+    - app/Models/AvailabilitySlot.php
+    - app/Models/SpecificAvailability.php
+    - app/Models/TrainingClass.php
+    - app/Models/Booking.php
+    - app/Models/Payment.php
+    - app/Models/Review.php
+    - app/Models/GroupInterest.php
+models:
+    User: { name: string, email: 'string unique', email_verified_at: 'timestampTz nullable', password: string, role: 'enum:Student,Coach,Admin', language: "string length:10 default:'es'", profile_picture_url: 'string nullable', stripe_customer_id: 'string unique nullable', stripe_account_id: 'string unique nullable', remember_token: 'string nullable', timestamps: timestamps, softdeletes: softDeletes }
+    Organization: { name: string, description: 'text nullable', owner_id: 'foreign:user', timestamps: timestamps, softdeletes: softDeletes }
+    Sport: { name_es: 'string unique', name_en: 'string unique', timestamps: timestamps }
+    Coach: { user_id: foreign, description: 'text nullable', city: 'string nullable index', country: 'string nullable index', coach_type: "enum:Individual,Club default:'Individual'", verified: 'boolean default:false', organization_id: 'foreign nullable', payment_info: 'string nullable', timestamps: timestamps, softdeletes: softDeletes }
+    CoachSport: { coach_id: foreign, sport_id: foreign, specific_price: 'decimal:10,2 nullable', specific_location: 'string nullable', session_duration_minutes: 'unsignedSmallInteger default:60', timestamps: timestamps, primary: 'coach_id,sport_id' }
+    AvailabilitySlot: { coach_id: foreign, sport_id: 'foreign nullable', weekday: 'tinyInteger index', start_time: time, end_time: time, is_online: 'boolean default:false', location: 'string nullable', capacity: 'unsignedSmallInteger default:1', timestamps: timestamps, unique: 'coach_id,weekday,start_time,end_time' }
+    SpecificAvailability: { coach_id: foreign, sport_id: 'foreign nullable', start_at: timestampTz, end_at: timestampTz, availability_type: "enum:Available,Blocked default:'Available'", capacity: 'unsignedSmallInteger nullable', is_online: 'boolean nullable', location: 'string nullable', reason: 'string nullable', timestamps: timestamps }
+    Class: { coach_id: foreign, sport_id: foreign, title: string, description: 'text nullable', starts_at: 'timestampTz index', duration_minutes: unsignedSmallInteger, location_detail: 'string nullable', is_online: 'boolean default:false', price_per_person: 'decimal:10,2', max_capacity: unsignedSmallInteger, min_required: 'unsignedSmallInteger default:1', enrollment_deadline: 'timestampTz nullable', status: "enum:Scheduled,ReadyToConfirm,Confirmed,Cancelled,Completed default:'Scheduled'", cancelled_at: 'timestampTz nullable', cancelled_reason: 'string nullable', timestamps: timestamps, softdeletes: softDeletes }
+    Booking: { student_id: 'foreign:user', coach_id: 'foreign nullable', availability_slot_id: 'foreign nullable', specific_availability_id: 'foreign nullable', class_id: 'foreign nullable', type: 'enum:Personal,Group', session_at: 'timestampTz index', session_duration_minutes: unsignedSmallInteger, status: "enum:Pending,Confirmed,Cancelled,Completed,Rejected default:'Pending'", total_amount: 'decimal:10,2', platform_fee: 'decimal:10,2', currency: "string length:3 default:'EUR'", cancelled_at: 'timestampTz nullable', cancelled_reason: 'string nullable', timestamps: timestamps, softdeletes: softDeletes }
+    Payment: { booking_id: 'foreign unique', stripe_payment_intent_id: 'string unique', amount: 'decimal:10,2', currency: "string length:3 default:'EUR'", status: "enum:Pending,Completed,Refunded,Failed default:'Pending'", timestamps: timestamps }
+    Review: { coach_id: foreign, student_id: 'foreign:user', booking_id: 'foreign unique', rating: 'tinyInteger unsigned', comment: 'text nullable', timestamps: timestamps }
+    GroupInterest: { student_id: 'foreign:user', sport_id: foreign, desired_time: 'string nullable', location_pref: 'string nullable', is_online_pref: 'boolean nullable', notes: 'text nullable', timestamps: timestamps }
+    TrainingClass: { coach_id: foreign, sport_id: foreign, title: string, description: 'text nullable', starts_at: 'timestampTz index', duration_minutes: unsignedSmallInteger, location_detail: 'string nullable', is_online: 'boolean default:false', price_per_person: 'decimal:10,2', max_capacity: unsignedSmallInteger, min_required: 'unsignedSmallInteger default:1', enrollment_deadline: 'timestampTz nullable', status: "enum:Scheduled,ReadyToConfirm,Confirmed,Cancelled,Completed default:'Scheduled'", cancelled_at: 'timestampTz nullable', cancelled_reason: 'string nullable', timestamps: timestamps, softdeletes: softDeletes }

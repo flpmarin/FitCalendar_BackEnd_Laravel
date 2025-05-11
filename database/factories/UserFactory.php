@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
@@ -12,9 +12,11 @@ use Illuminate\Support\Str;
 class UserFactory extends Factory
 {
     /**
-     * The current password being used by the factory.
+     * The name of the factory's corresponding model.
+     *
+     * @var string
      */
-    protected static ?string $password;
+    protected $model = User::class;
 
     /**
      * Define the model's default state.
@@ -24,12 +26,33 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => bcrypt('password'),
+            'role' => $this->faker->randomElement(['Student', 'Coach', 'Admin']),
+            'language' => 'es',
+            'profile_picture_url' => null,
+            'stripe_customer_id' => null,
+            'stripe_account_id' => null,
             'remember_token' => Str::random(10),
         ];
+    }
+
+    /**
+     * Configure the model to have Stripe IDs.
+     */
+    public function withStripeIds(): static
+    {
+        static $customerCounter = 1;
+        static $accountCounter = 1;
+
+        return $this->state(function (array $attributes) use (&$customerCounter, &$accountCounter) {
+            return [
+                'stripe_customer_id' => 'cus_'.str_pad($customerCounter++, 14, '0', STR_PAD_LEFT),
+                'stripe_account_id' => 'acct_'.str_pad($accountCounter++, 14, '0', STR_PAD_LEFT),
+            ];
+        });
     }
 
     /**
@@ -37,8 +60,10 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->state(function (array $attributes) {
+            return [
+                'email_verified_at' => null,
+            ];
+        });
     }
 }

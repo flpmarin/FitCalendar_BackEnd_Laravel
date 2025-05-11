@@ -1,0 +1,141 @@
+
+# draft.yaml  ── FitCalendar schema  (Blueprint v2.x)
+
+models:
+
+  # ──────────── CORE ────────────
+  User:
+    name: string
+    email: string unique
+    email_verified_at: timestampTz nullable
+    password: string
+    role: enum:Student,Coach,Admin
+    language: string length:10 default:'es'
+    profile_picture_url: string nullable
+    stripe_customer_id: string unique nullable
+    stripe_account_id: string unique nullable
+    remember_token: string nullable
+    timestamps: true
+    softDeletes: true
+
+  Organization:
+    name: string
+    description: text nullable
+    owner_id: foreign:user
+    timestamps: true
+    softDeletes: true
+
+  Sport:
+    name_es: string unique
+    name_en: string unique
+    timestamps: true
+
+  # ──────────── COACHING ────────────
+  Coach:
+    user_id: foreign
+    description: text nullable
+    city: string nullable index
+    country: string nullable index
+    coach_type: enum:Individual,Club default:'Individual'
+    verified: boolean default:false
+    organization_id: foreign nullable
+    payment_info: string nullable
+    timestamps: true
+    softDeletes: true
+
+  CoachSport:                         # ↔︎ pivot N:M
+    coach_id: foreign
+    sport_id: foreign
+    specific_price: decimal:10,2 nullable
+    specific_location: string nullable
+    session_duration_minutes: unsignedSmallInteger default:60
+    timestamps: true
+    primary: coach_id,sport_id        # PK compuesta
+
+  # ──────────── AVAILABILITY ────────────
+  AvailabilitySlot:
+    coach_id: foreign
+    sport_id: foreign nullable
+    weekday: tinyInteger index        # 1‑7 (Mon–Sun)
+    start_time: time
+    end_time: time
+    is_online: boolean default:false
+    location: string nullable
+    capacity: unsignedSmallInteger default:1
+    timestamps: true
+    unique: coach_id,weekday,start_time,end_time
+
+  SpecificAvailability:
+    coach_id: foreign
+    sport_id: foreign nullable
+    start_at: timestampTz
+    end_at: timestampTz
+    availability_type: enum:Available,Blocked default:'Available'
+    capacity: unsignedSmallInteger nullable
+    is_online: boolean nullable
+    location: string nullable
+    reason: string nullable
+    timestamps: true
+
+  # ──────────── CLASSES & BOOKINGS ────────────
+  TrainingClass:
+    coach_id: foreign
+    sport_id: foreign
+    title: string
+    description: text nullable
+    starts_at: timestampTz index
+    duration_minutes: unsignedSmallInteger # Mantener como smallint para PostgreSQL (valor máximo 32767)
+    location_detail: string nullable
+    is_online: boolean default:false
+    price_per_person: decimal:10,2
+    max_capacity: unsignedSmallInteger # Valor máximo 32767
+    min_required: unsignedSmallInteger default:1
+    enrollment_deadline: timestampTz nullable
+    status: enum:Scheduled,ReadyToConfirm,Confirmed,Cancelled,Completed default:'Scheduled'
+    cancelled_at: timestampTz nullable
+    cancelled_reason: string nullable
+    timestamps: true
+    softDeletes: true
+
+  Booking:
+    student_id: foreign:user
+    coach_id: foreign nullable
+    availability_slot_id: foreign nullable
+    specific_availability_id: foreign nullable
+    class_id: foreign nullable
+    type: enum:Personal,Group
+    session_at: timestampTz index
+    session_duration_minutes: unsignedSmallInteger # Mantener valores razonables
+    status: enum:Pending,Confirmed,Cancelled,Completed,Rejected default:'Pending'
+    total_amount: decimal:10,2
+    platform_fee: decimal:10,2
+    currency: string length:3 default:'EUR'
+    cancelled_at: timestampTz nullable
+    cancelled_reason: string nullable
+    timestamps: true
+    softDeletes: true
+
+  Payment:
+    booking_id: foreign unique
+    stripe_payment_intent_id: string unique
+    amount: decimal:10,2
+    currency: string length:3 default:'EUR'
+    status: enum:Pending,Completed,Refunded,Failed default:'Pending'
+    timestamps: true
+
+  Review:
+    coach_id: foreign
+    student_id: foreign:user
+    booking_id: foreign unique
+    rating: tinyInteger unsigned        # validaremos rango 1‑5 por código
+    comment: text nullable
+    timestamps: true
+
+  GroupInterest:
+    student_id: foreign:user
+    sport_id: foreign
+    desired_time: string nullable
+    location_pref: string nullable
+    is_online_pref: boolean nullable
+    notes: text nullable
+    timestamps: true
