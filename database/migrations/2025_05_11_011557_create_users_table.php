@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestampTz('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ["Student","Coach","Admin"]);
+            $table->enum('role', ['Student', 'Coach', 'Admin']);
             $table->string('language')->default('es');
             $table->string('profile_picture_url')->nullable();
             $table->string('stripe_customer_id')->unique()->nullable();

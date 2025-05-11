@@ -2,10 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Booking;
 use App\Models\Payment;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PaymentFactory extends Factory
 {
@@ -26,7 +25,7 @@ class PaymentFactory extends Factory
             'stripe_payment_intent_id' => fake()->word(),
             'amount' => fake()->randomFloat(2, 0, 99999999.99),
             'currency' => fake()->word(),
-            'status' => fake()->randomElement(["Pending","Completed","Refunded","Failed"]),
+            'status' => fake()->randomElement(['Pending', 'Completed', 'Refunded', 'Failed']),
         ];
     }
 }

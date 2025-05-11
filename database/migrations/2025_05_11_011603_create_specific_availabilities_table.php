@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('sport_id')->nullable()->constrained();
             $table->timestampTz('start_at');
             $table->timestampTz('end_at');
-            $table->enum('availability_type', ["Available","Blocked"])->default('Available');
+            $table->enum('availability_type', ['Available', 'Blocked'])->default('Available');
             $table->unsignedSmallInteger('capacity')->nullable();
             $table->boolean('is_online')->nullable();
             $table->string('location')->nullable();

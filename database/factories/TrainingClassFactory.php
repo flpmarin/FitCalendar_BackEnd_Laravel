@@ -2,11 +2,10 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Coach;
 use App\Models\Sport;
 use App\Models\TrainingClass;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TrainingClassFactory extends Factory
 {
@@ -35,7 +34,7 @@ class TrainingClassFactory extends Factory
             'max_capacity' => fake()->numberBetween(5, 30), // Capacidad razonable
             'min_required' => fake()->numberBetween(1, 4), // Mínimo requerido razonable
             'enrollment_deadline' => fake()->dateTime(),
-            'status' => fake()->randomElement(["Scheduled","ReadyToConfirm","Confirmed","Cancelled","Completed"]),
+            'status' => fake()->randomElement(['Scheduled', 'ReadyToConfirm', 'Confirmed', 'Cancelled', 'Completed']),
             'cancelled_at' => fake()->dateTime(),
             'cancelled_reason' => fake()->word(),
         ];

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('max_capacity');
             $table->unsignedSmallInteger('min_required')->default(1);
             $table->timestampTz('enrollment_deadline')->nullable();
-            $table->enum('status', ["Scheduled","ReadyToConfirm","Confirmed","Cancelled","Completed"])->default('Scheduled');
+            $table->enum('status', ['Scheduled', 'ReadyToConfirm', 'Confirmed', 'Cancelled', 'Completed'])->default('Scheduled');
             $table->timestampTz('cancelled_at')->nullable();
             $table->string('cancelled_reason')->nullable();
             $table->timestamps();

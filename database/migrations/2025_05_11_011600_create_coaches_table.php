@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('city')->nullable()->index();
             $table->string('country')->nullable()->index();
-            $table->enum('coach_type', ["Individual","Club"])->default('Individual');
+            $table->enum('coach_type', ['Individual', 'Club'])->default('Individual');
             $table->boolean('verified')->default(false);
             $table->foreignId('organization_id')->nullable()->constrained();
             $table->string('payment_info')->nullable();

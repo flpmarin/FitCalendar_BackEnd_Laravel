@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('stripe_payment_intent_id')->unique();
             $table->decimal('amount', 10, 2);
             $table->string('currency')->default('EUR');
-            $table->enum('status', ["Pending","Completed","Refunded","Failed"])->default('Pending');
+            $table->enum('status', ['Pending', 'Completed', 'Refunded', 'Failed'])->default('Pending');
             $table->timestamps();
         });
 

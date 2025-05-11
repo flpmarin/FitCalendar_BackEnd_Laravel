@@ -18,10 +18,10 @@ return new class extends Migration
             $table->foreignId('availability_slot_id')->nullable()->constrained();
             $table->foreignId('specific_availability_id')->nullable()->constrained();
             $table->foreignId('class_id')->nullable()->constrained('training_classes');
-            $table->enum('type', ["Personal","Group"]);
+            $table->enum('type', ['Personal', 'Group']);
             $table->timestampTz('session_at')->index();
             $table->unsignedSmallInteger('session_duration_minutes');
-            $table->enum('status', ["Pending","Confirmed","Cancelled","Completed","Rejected"])->default('Pending');
+            $table->enum('status', ['Pending', 'Confirmed', 'Cancelled', 'Completed', 'Rejected'])->default('Pending');
             $table->decimal('total_amount', 10, 2);
             $table->decimal('platform_fee', 10, 2);
             $table->string('currency')->default('EUR');

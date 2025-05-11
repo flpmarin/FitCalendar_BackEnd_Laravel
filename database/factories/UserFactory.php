@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\User;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -49,8 +49,20 @@ class UserFactory extends Factory
 
         return $this->state(function (array $attributes) use (&$customerCounter, &$accountCounter) {
             return [
-                'stripe_customer_id' => 'cus_' . str_pad($customerCounter++, 14, '0', STR_PAD_LEFT),
-                'stripe_account_id' => 'acct_' . str_pad($accountCounter++, 14, '0', STR_PAD_LEFT),
+                'stripe_customer_id' => 'cus_'.str_pad($customerCounter++, 14, '0', STR_PAD_LEFT),
+                'stripe_account_id' => 'acct_'.str_pad($accountCounter++, 14, '0', STR_PAD_LEFT),
+            ];
+        });
+    }
+
+    /**
+     * Indicate that the model's email address should be unverified.
+     */
+    public function unverified(): static
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'email_verified_at' => null,
             ];
         });
     }

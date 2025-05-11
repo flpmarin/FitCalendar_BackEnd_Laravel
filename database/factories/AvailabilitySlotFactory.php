@@ -2,11 +2,10 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\AvailabilitySlot;
 use App\Models\Coach;
 use App\Models\Sport;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AvailabilitySlotFactory extends Factory
 {

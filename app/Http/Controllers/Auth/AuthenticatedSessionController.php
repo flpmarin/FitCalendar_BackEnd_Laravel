@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -23,7 +22,7 @@ class AuthenticatedSessionController extends Controller
 
         if (! Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
-                'message' => 'Invalid credentials'
+                'message' => 'Invalid credentials',
             ], 401);
         }
 
@@ -38,14 +37,26 @@ class AuthenticatedSessionController extends Controller
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): Response
+    public function destroy(Request $request)
     {
-        Auth::guard('web')->logout();
+        // Para solicitudes de API
+        if ($request->wantsJson() || $request->bearerToken()) {
+            // Autenticación basada en tokens (API)
+            if ($request->user()) {
+                $request->user()->currentAccessToken()->delete();
+            }
 
-        $request->session()->invalidate();
+            return response()->json(['message' => 'Logged out successfully']);
+        } else {
+            // Autenticación basada en sesiones (Filament/Web)
+            Auth::guard('web')->logout();
 
-        $request->session()->regenerateToken();
+            if ($request->hasSession()) {
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+            }
 
-        return response()->noContent();
+            return response()->noContent();
+        }
     }
 }

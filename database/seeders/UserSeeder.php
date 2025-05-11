@@ -18,8 +18,8 @@ class UserSeeder extends Seeder
                 'name' => 'Admin User',
                 'password' => Hash::make('password'),
                 'role' => 'Admin',
-                'stripe_customer_id' => 'cus_' . Str::random(14),
-                'stripe_account_id' => 'acct_' . Str::random(14),
+                'stripe_customer_id' => 'cus_'.Str::random(14),
+                'stripe_account_id' => 'acct_'.Str::random(14),
             ]
         );
 
@@ -29,8 +29,8 @@ class UserSeeder extends Seeder
             $numCoachesToCreate = 5 - $coachCount;
             User::factory($numCoachesToCreate)->create([
                 'role' => 'Coach',
-                'stripe_customer_id' => fn() => 'cus_' . Str::random(14),
-                'stripe_account_id' => fn() => 'acct_' . Str::random(14),
+                'stripe_customer_id' => fn () => 'cus_'.Str::random(14),
+                'stripe_account_id' => fn () => 'acct_'.Str::random(14),
             ]);
         }
 
@@ -40,8 +40,8 @@ class UserSeeder extends Seeder
             $numStudentsToCreate = 10 - $studentCount;
             User::factory($numStudentsToCreate)->create([
                 'role' => 'Student',
-                'stripe_customer_id' => fn() => 'cus_' . Str::random(14),
-                'stripe_account_id' => fn() => 'acct_' . Str::random(14),
+                'stripe_customer_id' => fn () => 'cus_'.Str::random(14),
+                'stripe_account_id' => fn () => 'acct_'.Str::random(14),
             ]);
         }
     }

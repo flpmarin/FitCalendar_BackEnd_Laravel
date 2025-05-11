@@ -2,11 +2,10 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Coach;
 use App\Models\Organization;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CoachFactory extends Factory
 {
@@ -27,7 +26,7 @@ class CoachFactory extends Factory
             'description' => fake()->text(),
             'city' => fake()->city(),
             'country' => fake()->country(),
-            'coach_type' => fake()->randomElement(["Individual","Club"]),
+            'coach_type' => fake()->randomElement(['Individual', 'Club']),
             'verified' => fake()->boolean(),
             'organization_id' => Organization::factory(),
             'payment_info' => fake()->word(),
