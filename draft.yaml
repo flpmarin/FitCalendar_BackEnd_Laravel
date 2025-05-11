@@ -1,3 +1,4 @@
+
 # draft.yaml  ── FitCalendar schema  (Blueprint v2.x)
 
 models:
@@ -42,7 +43,7 @@ models:
     timestamps: true
     softDeletes: true
 
-  CoachSport:                         # ↔︎ pivot N:M
+  CoachSport:                         # ↔︎ pivot N:M
     coach_id: foreign
     sport_id: foreign
     specific_price: decimal:10,2 nullable
@@ -83,11 +84,11 @@ models:
     title: string
     description: text nullable
     starts_at: timestampTz index
-    duration_minutes: unsignedSmallInteger
+    duration_minutes: unsignedSmallInteger # Mantener como smallint para PostgreSQL (valor máximo 32767)
     location_detail: string nullable
     is_online: boolean default:false
     price_per_person: decimal:10,2
-    max_capacity: unsignedSmallInteger
+    max_capacity: unsignedSmallInteger # Valor máximo 32767
     min_required: unsignedSmallInteger default:1
     enrollment_deadline: timestampTz nullable
     status: enum:Scheduled,ReadyToConfirm,Confirmed,Cancelled,Completed default:'Scheduled'
@@ -104,7 +105,7 @@ models:
     class_id: foreign nullable
     type: enum:Personal,Group
     session_at: timestampTz index
-    session_duration_minutes: unsignedSmallInteger
+    session_duration_minutes: unsignedSmallInteger # Mantener valores razonables
     status: enum:Pending,Confirmed,Cancelled,Completed,Rejected default:'Pending'
     total_amount: decimal:10,2
     platform_fee: decimal:10,2

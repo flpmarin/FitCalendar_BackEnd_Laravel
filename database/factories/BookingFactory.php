@@ -2,11 +2,11 @@
 
 namespace Database\Factories;
 
-use App\Models\TrainingClass;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\AvailabilitySlot;
 use App\Models\Booking;
+use App\Models\TrainingClass; //
 use App\Models\Coach;
 use App\Models\SpecificAvailability;
 use App\Models\User;
@@ -30,7 +30,7 @@ class BookingFactory extends Factory
             'coach_id' => Coach::factory(),
             'availability_slot_id' => AvailabilitySlot::factory(),
             'specific_availability_id' => SpecificAvailability::factory(),
-            'class_id' => TrainingClass::factory(),
+            'class_id' => TrainingClass::factory(), //
             'type' => fake()->randomElement(["Personal","Group"]),
             'session_at' => fake()->dateTime(),
             'session_duration_minutes' => fake()->randomNumber(),

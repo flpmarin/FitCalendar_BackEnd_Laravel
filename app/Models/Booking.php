@@ -11,11 +11,6 @@ class Booking extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'student_id',
         'coach_id',
@@ -33,11 +28,6 @@ class Booking extends Model
         'cancelled_reason',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -57,7 +47,7 @@ class Booking extends Model
 
     public function student(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(User::class);
     }
 
     public function coach(): BelongsTo
@@ -75,7 +65,7 @@ class Booking extends Model
         return $this->belongsTo(SpecificAvailability::class);
     }
 
-    public function trainingClass(): BelongsTo
+    public function class(): BelongsTo
     {
         return $this->belongsTo(TrainingClass::class, 'class_id');
     }

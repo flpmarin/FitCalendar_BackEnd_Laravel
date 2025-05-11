@@ -28,12 +28,12 @@ class TrainingClassFactory extends Factory
             'title' => fake()->sentence(4),
             'description' => fake()->text(),
             'starts_at' => fake()->dateTime(),
-            'duration_minutes' => fake()->randomNumber(),
+            'duration_minutes' => fake()->numberBetween(30, 180), // Valores razonables entre 30 min y 3 horas
             'location_detail' => fake()->word(),
             'is_online' => fake()->boolean(),
-            'price_per_person' => fake()->randomFloat(2, 0, 99999999.99),
-            'max_capacity' => fake()->randomNumber(),
-            'min_required' => fake()->randomNumber(),
+            'price_per_person' => fake()->randomFloat(2, 10, 999.99), // Precios más realistas
+            'max_capacity' => fake()->numberBetween(5, 30), // Capacidad razonable
+            'min_required' => fake()->numberBetween(1, 4), // Mínimo requerido razonable
             'enrollment_deadline' => fake()->dateTime(),
             'status' => fake()->randomElement(["Scheduled","ReadyToConfirm","Confirmed","Cancelled","Completed"]),
             'cancelled_at' => fake()->dateTime(),
