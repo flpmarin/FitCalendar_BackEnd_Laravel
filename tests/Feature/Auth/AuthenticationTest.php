@@ -64,7 +64,7 @@ class AuthenticationTest extends TestCase
     {
         $this->markTestSkipped('El logout basado en sesiones aún no está implementado.');
 
-        $user = User::factory()->create();
+        /*$user = User::factory()->create();
 
         // Iniciamos sesión
         $this->actingAs($user);
@@ -73,5 +73,6 @@ class AuthenticationTest extends TestCase
 
         $response->assertStatus(204); // No Content
         $this->assertGuest();
+        */
     }
 }
