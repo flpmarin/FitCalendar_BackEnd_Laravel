@@ -77,7 +77,7 @@ models:
     timestamps: true
 
   # ──────────── CLASSES & BOOKINGS ────────────
-  Class:
+  TrainingClass:
     coach_id: foreign
     sport_id: foreign
     title: string
