@@ -28,7 +28,7 @@ services:
     pgsql:
         image: 'postgres:15'
         ports:
-            - '5433:5432'
+            - '${FORWARD_DB_PORT:-5432}:5432'
         environment:
             POSTGRES_DB: laravel
             POSTGRES_USER: sail
