@@ -1,16 +1,15 @@
 # FitCalendar - Guía de Instalación
 ## Requisitos Previos
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y funcionando en tu sistema
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y funcionando
 - [Git](https://git-scm.com/downloads) instalado
 
-## Pasos para la Instalación
+## Instrucciones de Instalación (Válido para Windows, macOS y Linux)
 ### 1. Clonar el Repositorio
 ``` bash
 git clone [URL_DEL_REPOSITORIO]
 cd fitcalendar
 ```
-### 2. Configurar el Archivo de Entorno
-Copia el archivo a un nuevo archivo llamado : `.env.example``.env`
+### 2. Configurar Archivo de Entorno
 ``` bash
 # En Windows
 copy .env.example .env
@@ -18,128 +17,52 @@ copy .env.example .env
 # En macOS/Linux
 cp .env.example .env
 ```
-### 3. Configuración del Entorno
-El archivo ya está preconfigurado para trabajar con Docker. Los valores importantes que debes revisar son: `.env`
-- : Se generará automáticamente en un paso posterior `APP_KEY`
-- : Configurado para PostgreSQL `DB_CONNECTION`
-- : Establecido como (nombre del servicio de Docker) `DB_HOST``pgsql`
-- : 5432 `DB_PORT`
-- : laravel `DB_DATABASE`
-- : sail `DB_USERNAME`
-- : password `DB_PASSWORD`
-
-### 4. Iniciar los Contenedores Docker
-Laravel Sail es compatible tanto con Windows como con macOS/Linux, pero en Windows se debe ejecutar a través de WSL (Windows Subsystem for Linux).
-#### Opción 1: Usando Docker Compose (recomendado para principiantes)
+### 3. Iniciar Docker
 ``` bash
 docker-compose up -d
 ```
-#### Opción 2: Usando Laravel Sail (si tienes WSL en Windows o usas macOS/Linux)
-Si aún no tienes las dependencias instaladas:
+Este comando iniciará todos los contenedores necesarios para el proyecto.
+### 4. Configurar la Aplicación
 ``` bash
-docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v "$(pwd):/var/www/html" \
-    -w /var/www/html \
-    composer install --ignore-platform-reqs
-```
-Luego:
-``` bash
-./vendor/bin/sail up -d
-```
-Este comando iniciará todos los servicios definidos en el : `docker-compose.yml`
-- Aplicación Laravel (PHP 8.4)
-- PostgreSQL 15
-- Mailpit (para pruebas de correo)
-- Selenium (para pruebas de navegador)
-
-### 5. Generar Clave de Aplicación
-``` bash
-# Con Docker Compose
+# Generar clave de aplicación
 docker-compose exec laravel.test php artisan key:generate
 
-# O con Sail (si lo tienes configurado)
-./vendor/bin/sail artisan key:generate
-```
-### 6. Ejecutar Migraciones y Semillas
-``` bash
-# Con Docker Compose
+# Ejecutar migraciones y semillas
 docker-compose exec laravel.test php artisan migrate --seed
-
-# O con Sail (si lo tienes configurado)
-./vendor/bin/sail artisan migrate --seed
 ```
-### 7. Instalar Dependencias de Composer
-Este paso puede omitirse si ya instalaste las dependencias al principio.
-``` bash
-# Con Docker Compose
-docker-compose exec laravel.test composer install
-
-# O con Sail (si lo tienes configurado)
-./vendor/bin/sail composer install
-```
-### 8. Acceder a la Aplicación
-Una vez completados los pasos anteriores, puedes acceder a la aplicación en tu navegador:
+### 5. Acceder a la Aplicación
 - **URL de la Aplicación**: [http://localhost](http://localhost)
 - **Dashboard de Mailpit**: [http://localhost:8025](http://localhost:8025)
 
-## Comandos Útiles
-### Detener los Contenedores
+## Comandos Básicos
+### Detener Contenedores
 ``` bash
-# Con Docker Compose
 docker-compose down
-
-# O con Sail (si lo tienes configurado)
-./vendor/bin/sail down
 ```
-### Reiniciar los Contenedores
+### Reiniciar Contenedores
 ``` bash
-# Con Docker Compose
 docker-compose restart
-
-# O con Sail (si lo tienes configurado)
-./vendor/bin/sail restart
 ```
-### Ejecutar Pruebas
+### Ejecutar Comandos de Artisan
 ``` bash
-# Con Docker Compose
-docker-compose exec laravel.test php artisan test
-
-# O con Sail (si lo tienes configurado)
-./vendor/bin/sail test
+docker-compose exec laravel.test php artisan [comando]
 ```
-### Acceder a la Base de Datos PostgreSQL
+### Acceder a PostgreSQL
 ``` bash
-# Con Docker Compose
 docker-compose exec pgsql psql -U sail -d laravel
-
-# O con Sail (si lo tienes configurado)
-./vendor/bin/sail psql
 ```
-## Solución de Problemas Comunes
+## Solución de Problemas
 ### Puertos en Uso
-Si recibes un error indicando que los puertos ya están en uso, puedes cambiar los puertos en el archivo : `.env`
-- Cambia para la aplicación web (predeterminado: 80) `APP_PORT`
-- Cambia para PostgreSQL (predeterminado: 5433) `FORWARD_DB_PORT`
+Si los puertos ya están en uso, puedes cambiarlos en el archivo : `.env`
+- Para la aplicación web: (predeterminado: 80) `APP_PORT`
+- Para PostgreSQL: (predeterminado: 5433) `FORWARD_DB_PORT`
 
-### Problemas de Permisos en Windows
-Si encuentras problemas de permisos en Windows, asegúrate de que Docker Desktop tenga acceso a la ubicación donde has clonado el repositorio y que WSL esté configurado correctamente si estás usando Sail.
-### Datos de Acceso a Postgres desde Herramientas Externas
+### Acceso a Postgres desde Herramientas Externas
 - **Host**: localhost
 - **Puerto**: 5433 (o el valor de FORWARD_DB_PORT en tu .env)
 - **Base de datos**: laravel
 - **Usuario**: sail
 - **Contraseña**: password
-
-## Nota para Desarrolladores
-La aplicación está configurada para utilizar PostgreSQL como base de datos principal. Si necesitas realizar cambios en la estructura de la base de datos, recuerda crear las migraciones correspondientes utilizando:
-``` bash
-# Con Docker Compose
-docker-compose exec laravel.test php artisan make:migration nombre_de_la_migracion
-
-# O con Sail (si lo tienes configurado)
-./vendor/bin/sail artisan make:migration nombre_de_la_migracion
-```
 
 # FitCalendar
 ## Descripción del Proyecto
