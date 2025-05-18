@@ -20,8 +20,11 @@ return new class extends Migration
             $table->decimal('specific_price', 10, 2)->nullable();
             $table->string('specific_location')->nullable();
             $table->unsignedSmallInteger('session_duration_minutes')->default(60);
-            $table->string('primary');
             $table->timestamps();
+
+            //
+            $table->unique(['coach_id', 'sport_id']);
+
         });
 
         Schema::enableForeignKeyConstraints();

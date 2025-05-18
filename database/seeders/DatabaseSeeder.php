@@ -13,6 +13,8 @@ class DatabaseSeeder extends Seeder
             OrganizationSeeder::class,
             SportSeeder::class,
             CoachSeeder::class,
+            CoachSportSeeder::class,
+            AvailabilitySlotSeeder::class,
             TrainingClassSeeder::class,
         ]);
     }

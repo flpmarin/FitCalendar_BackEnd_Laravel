@@ -60,4 +60,11 @@ class Coach extends Model
     {
         return $this->hasMany(TrainingClass::class);
     }
+    public function sports()
+    {
+        return $this->belongsToMany(Sport::class, 'coach_sports')
+            ->withPivot('specific_price', 'specific_location', 'session_duration_minutes')
+            ->withTimestamps();
+    }
+
 }
