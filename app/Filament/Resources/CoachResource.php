@@ -4,12 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CoachResource\Pages;
 use App\Models\Coach;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CoachResource extends Resource
@@ -27,10 +28,12 @@ class CoachResource extends Resource
                     ->searchable()
                     ->preload()
                     ->options(
-                        \App\Models\User::where('role', 'Coach')
+                        \App\Models\User::query()
+                            ->where('role', 'Coach')
                             ->whereDoesntHave('coach')
                             ->pluck('name', 'id')
                     )
+
                     ->required()
                     ->label('Usuario'),
                 Forms\Components\Textarea::make('description')

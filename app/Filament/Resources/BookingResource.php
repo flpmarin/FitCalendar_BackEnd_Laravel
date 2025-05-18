@@ -9,7 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -92,7 +92,8 @@ class BookingResource extends Resource
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
 
-                Tables\Columns\BadgeColumn::make('status')
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
                     ->label('Estado')
                     ->colors([
                         'danger' => 'Cancelled',
@@ -133,15 +134,15 @@ class BookingResource extends Resource
                         Forms\Components\DatePicker::make('created_until')
                             ->label('Creada hasta'),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
+                    ->query(function (EloquentBuilder $query, array $data): EloquentBuilder {
                         return $query
                             ->when(
                                 $data['created_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn (EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn (EloquentBuilder $query, $date): EloquentBuilder => $query->whereDate('created_at', '<=', $date),
                             );
                     }),
             ])
