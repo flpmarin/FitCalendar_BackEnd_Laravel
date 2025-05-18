@@ -121,7 +121,6 @@ class TrainingClassResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -143,7 +142,6 @@ class TrainingClassResource extends Resource
         return [
             'index' => Pages\ListTrainingClasses::route('/'),
             'create' => Pages\CreateTrainingClass::route('/create'),
-            'view' => Pages\ViewTrainingClass::route('/{record}'),
             'edit' => Pages\EditTrainingClass::route('/{record}/edit'),
         ];
     }

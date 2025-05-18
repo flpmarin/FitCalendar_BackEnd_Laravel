@@ -36,11 +36,32 @@ class ReviewResource extends Resource
                     ->relationship('student', 'name')
                     ->required(),
                 Forms\Components\Select::make('booking_id')
-                    ->relationship('booking', 'id')
-                    ->required(),
-                Forms\Components\TextInput::make('rating')
+                    ->label('Clase Reservada')
+                    ->relationship(
+                        'booking',
+                        'id',
+                        fn ($query) => $query->with(['session', 'session.sportClass'])
+                    )
+                    ->getOptionLabelFromRecordUsing(function ($record) {
+                        $className = $record->session->sportClass->name ?? 'Clase';
+                        $sessionDate = $record->session->start_time ? \Carbon\Carbon::parse($record->session->start_time)->format('d/m/Y H:i') : 'Fecha no disponible';
+
+                        return "{$className} - {$sessionDate}";
+                    })
+                    ->searchable()
+                    ->preload()
                     ->required()
-                    ->numeric(),
+                    ->unique(),
+                Forms\Components\Select::make('rating')
+                    ->options([
+                        0 => '0',
+                        1 => '1',
+                        2 => '2',
+                        3 => '3',
+                        4 => '4',
+                        5 => '5'
+                    ])
+                    ->required(),
                 Forms\Components\Textarea::make('comment')
                     ->columnSpanFull(),
             ]);
