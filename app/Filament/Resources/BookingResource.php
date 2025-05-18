@@ -19,6 +19,7 @@ class BookingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
+    protected static ?string $navigationGroup = 'Reservas';
     protected static ?string $navigationLabel = 'Reservas';
 
     // Desactivamos la capacidad de crear reservas desde el panel admin
@@ -95,12 +96,12 @@ class BookingResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->label('Estado')
-                    ->colors([
-                        'danger' => 'Cancelled',
-                        'warning' => 'Pending',
-                        'success' => fn ($state) => in_array($state, ['Confirmed', 'Completed']),
-                    ]),
-
+                    ->color(fn (string $state): string => match ($state) {
+                        'Cancelled' => 'danger',
+                        'Pending' => 'warning',
+                        'Confirmed', 'Completed' => 'success',
+                        default => 'gray',
+                    }),
                 Tables\Columns\IconColumn::make('is_paid')
                     ->label('Pagada')
                     ->boolean(),
