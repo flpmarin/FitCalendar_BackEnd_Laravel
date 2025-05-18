@@ -23,7 +23,14 @@ class ReviewResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('coach_id')
-                    ->relationship('coach', 'id')
+                    ->options(function () {
+                        return \App\Models\Coach::query()
+                            ->join('users', 'coaches.user_id', '=', 'users.id')
+                            ->pluck('users.name', 'coaches.id')
+                            ->toArray();
+                    })
+                    ->searchable()
+                    ->preload()
                     ->required(),
                 Forms\Components\Select::make('student_id')
                     ->relationship('student', 'name')

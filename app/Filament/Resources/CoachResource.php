@@ -39,9 +39,12 @@ class CoachResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('country')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('coach_type')
+                Forms\Components\Select::make('coach_type')
+                    ->options([
+                        'Individual' => 'Individual',
+                        'Club' => 'Club',
+                    ])
                     ->required()
-                    ->maxLength(255)
                     ->default('Individual'),
                 Forms\Components\Toggle::make('verified')
                     ->required(),
