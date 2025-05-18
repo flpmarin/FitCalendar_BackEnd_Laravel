@@ -21,7 +21,6 @@ class CoachSport extends Model
         'specific_price',
         'specific_location',
         'session_duration_minutes',
-        'primary',
     ];
 
     /**

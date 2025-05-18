@@ -23,8 +23,11 @@ return new class extends Migration
             $table->boolean('is_online')->default(false);
             $table->string('location')->nullable();
             $table->unsignedSmallInteger('capacity')->default(1);
-            $table->string('unique');
             $table->timestamps();
+
+            // restricción única para la combinación de columnas
+            $table->unique(['coach_id', 'weekday', 'start_time', 'end_time']);
+
         });
 
         Schema::enableForeignKeyConstraints();
