@@ -16,41 +16,87 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user';
+
+    protected static ?string $navigationGroup = 'Usuarios';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('role')
-                    ->options([
-                        'Student' => 'Student',
-                        'Coach' => 'Coach',
-                        'Admin' => 'Admin',
+                // Sección de información básica
+                Forms\Components\Section::make('Información básica')
+                    ->description('Datos principales del usuario')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->label('Nombre'),
+
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+
+                        Forms\Components\DateTimePicker::make('email_verified_at')
+                            ->label('Email verificado'),
+
+                        Forms\Components\Select::make('role')
+                            ->options([
+                                'Student' => 'Student',
+                                'Coach' => 'Coach',
+                                'Admin' => 'Admin',
+                            ])
+                            ->required()
+                            ->label('Rol'),
                     ])
-                    ->required(),
-                Forms\Components\TextInput::make('language')
-                    ->required()
-                    ->maxLength(255)
-                    ->default('es'),
-                Forms\Components\TextInput::make('profile_picture_url')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('stripe_customer_id')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('stripe_account_id')
-                    ->maxLength(255),
+                    ->columns(2), // Organiza los campos en 2 columnas
+
+                // Sección de seguridad
+                Forms\Components\Section::make('Seguridad')
+                    ->description('Contraseña y configuración de acceso')
+                    ->schema([
+                        Forms\Components\TextInput::make('password')
+                            ->password()
+                            ->dehydrateStateUsing(fn ($state) =>
+                            filled($state) ? bcrypt($state) : null)
+                            ->required(fn ($livewire) => $livewire instanceof Pages\CreateUser)
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->maxLength(255)
+                            ->label('Contraseña'),
+                    ])
+                    ->collapsible(), // Permite colapsar esta sección
+
+                // Sección de preferencias
+                Forms\Components\Section::make('Preferencias')
+                    ->description('Opciones y configuración del usuario')
+                    ->schema([
+                        Forms\Components\TextInput::make('language')
+                            ->required()
+                            ->maxLength(255)
+                            ->default('es')
+                            ->label('Idioma'),
+
+                        Forms\Components\TextInput::make('profile_picture_url')
+                            ->maxLength(255)
+                            ->label('URL de imagen de perfil'),
+                    ])
+                    ->collapsed(), // Inicia esta sección colapsada
+
+                // Sección de integración de pagos
+                Forms\Components\Section::make('Información de pago')
+                    ->description('Datos de integración con Stripe')
+                    ->schema([
+                        Forms\Components\TextInput::make('stripe_customer_id')
+                            ->maxLength(255)
+                            ->label('ID de cliente en Stripe'),
+
+                        Forms\Components\TextInput::make('stripe_account_id')
+                            ->maxLength(255)
+                            ->label('ID de cuenta en Stripe'),
+                    ])
+                    ->collapsed() // Inicia esta sección colapsada
+                    ->hidden(fn ($livewire) => $livewire instanceof Pages\CreateUser), // Oculta en creación
             ]);
     }
 
@@ -69,21 +115,11 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('language')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('profile_picture_url')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('stripe_customer_id')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('stripe_account_id')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

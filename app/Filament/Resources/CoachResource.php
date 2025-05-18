@@ -4,19 +4,22 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CoachResource\Pages;
 use App\Models\Coach;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CoachResource extends Resource
 {
     protected static ?string $model = Coach::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
+    protected static ?string $navigationGroup = 'Usuarios';
 
     public static function form(Form $form): Form
     {
@@ -27,10 +30,12 @@ class CoachResource extends Resource
                     ->searchable()
                     ->preload()
                     ->options(
-                        \App\Models\User::where('role', 'Coach')
+                        \App\Models\User::query()
+                            ->where('role', 'Coach')
                             ->whereDoesntHave('coach')
                             ->pluck('name', 'id')
                     )
+
                     ->required()
                     ->label('Usuario'),
                 Forms\Components\Textarea::make('description')
@@ -39,9 +44,12 @@ class CoachResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('country')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('coach_type')
+                Forms\Components\Select::make('coach_type')
+                    ->options([
+                        'Individual' => 'Individual',
+                        'Club' => 'Club',
+                    ])
                     ->required()
-                    ->maxLength(255)
                     ->default('Individual'),
                 Forms\Components\Toggle::make('verified')
                     ->required(),
