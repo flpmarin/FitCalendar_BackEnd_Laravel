@@ -64,6 +64,35 @@ Si los puertos ya están en uso, puedes cambiarlos en el archivo : `.env`
 - **Usuario**: sail
 - **Contraseña**: password
 
+## Acceso al Panel de Administración
+
+### Acceso al Panel de Administración Filament
+
+El sistema incluye un panel de administración desarrollado con Filament que permite gestionar todos los aspectos de la plataforma.
+
+1. **Acceso con datos de prueba (con seeders)**:
+   ```bash
+   # Ejecutar migraciones y seeders
+   docker-compose exec laravel.test php artisan migrate:fresh --seed
+   ```
+
+   Luego accede a [http://localhost/admin](http://localhost/admin) usando las siguientes credenciales:
+    - **Email**: admin@example.com
+    - **Contraseña**: password
+
+2. **Acceso sin datos de prueba**:
+   ```bash
+   # Ejecutar solo migraciones (sin datos de prueba)
+   docker-compose exec laravel.test php artisan migrate:fresh
+   
+   # Crear un usuario administrador con el comando de Filament
+   docker-compose exec laravel.test php artisan make:filament-user
+   ```
+
+   El comando `make:filament-user` te guiará interactivamente para crear un usuario administrador que podrás usar para acceder al panel.
+
+
+
 # FitCalendar
 ## Descripción del Proyecto
 FitCalendar es una plataforma  que conecta entrenadores deportivos con estudiantes en busca de formación deportiva personalizada. El sistema permite la gestión completa del ciclo de reservas de clases deportivas, tanto individuales como grupales, y facilita la coordinación entre entrenadores y alumnos.
