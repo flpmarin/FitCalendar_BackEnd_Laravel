@@ -403,5 +403,5 @@ Todas las respuestas de error siguen el mismo formato:
 }
 ```
 El campo `errors` solo aparece cuando hay errores de validación (código 422).
-``` 
+
 

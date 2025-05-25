@@ -24,6 +24,7 @@ class Booking extends Model
         'total_amount',
         'platform_fee',
         'currency',
+        'payment_status',
         'cancelled_at',
         'cancelled_reason',
     ];
@@ -41,8 +42,22 @@ class Booking extends Model
             'session_duration_minutes' => 'integer',
             'total_amount' => 'decimal:2',
             'platform_fee' => 'decimal:2',
+            'payment_status' => 'string',
             'cancelled_at' => 'timestamp',
         ];
+    }
+
+    // para marcar como pagado
+    public function markAsPaid(): self
+    {
+        $this->update(['payment_status' => 'Completado']);
+        return $this;
+    }
+
+    //   verificar si está pagado
+    public function isPaid(): bool
+    {
+        return $this->payment_status === 'Completado';
     }
 
     public function student(): BelongsTo

@@ -58,12 +58,14 @@ class BookingResource extends Resource
                     ->numeric()
                     ->prefix(fn (callable $get) => $get('currency') === 'EUR' ? '€' : '$'),
 
-                Forms\Components\Toggle::make('is_paid')
-                    ->label('¿Pagada?'),
-
-                Forms\Components\DateTimePicker::make('payment_date')
-                    ->label('Fecha de pago')
-                    ->visible(fn (callable $get) => $get('is_paid')),
+                Forms\Components\Select::make('payment_status')
+                    ->options([
+                        'Pendiente' => 'Pendiente',
+                        'Completado' => 'Completado',
+                    ])
+                    ->default('Pendiente')
+                    ->label('Estado de pago')
+                    ->required(),
 
                 Forms\Components\Textarea::make('notes')
                     ->label('Notas')
@@ -96,15 +98,20 @@ class BookingResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->label('Estado')
-                    ->color(fn (string $state): string => match ($state) {
-                        'Cancelled' => 'danger',
-                        'Pending' => 'warning',
-                        'Confirmed', 'Completed' => 'success',
-                        default => 'gray',
-                    }),
-                Tables\Columns\IconColumn::make('is_paid')
-                    ->label('Pagada')
-                    ->boolean(),
+                    ->colors([
+                        'danger' => 'Cancelled',
+                        'warning' => 'Pending',
+                        'success' => fn ($state) => in_array($state, ['Confirmed', 'Completed']),
+                        'gray' => fn ($state) => !in_array($state, ['Cancelled', 'Pending', 'Confirmed', 'Completed']),
+                    ]),
+
+                Tables\Columns\TextColumn::make('payment_status')
+                    ->badge()
+                    ->label('Estado de pago')
+                    ->colors([
+                        'warning' => 'Pendiente',
+                        'success' => 'Completado',
+                    ]),
 
                 Tables\Columns\TextColumn::make('amount')
                     ->label('Importe')
@@ -125,8 +132,12 @@ class BookingResource extends Resource
                         'Completed' => 'Completada',
                     ]),
 
-                Tables\Filters\TernaryFilter::make('is_paid')
-                    ->label('Pagada'),
+                Tables\Filters\SelectFilter::make('payment_status')
+                    ->options([
+                        'Pendiente' => 'Pendiente',
+                        'Completado' => 'Completado',
+                    ])
+                    ->label('Estado de pago'),
 
                 Tables\Filters\Filter::make('created_at')
                     ->form([
@@ -150,7 +161,7 @@ class BookingResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                // Puedes añadir acciones específicas como:
+
                 Tables\Actions\Action::make('confirm')
                     ->label('Confirmar')
                     ->color('success')
@@ -169,11 +180,23 @@ class BookingResource extends Resource
                     })
                     ->requiresConfirmation()
                     ->visible(fn (Booking $record) => in_array($record->status, ['Pending', 'Confirmed'])),
+
+                Tables\Actions\Action::make('markAsPaid')
+                    ->label('Marcar como pagado')
+                    ->icon('heroicon-o-banknotes')
+                    ->color('success')
+                    ->visible(fn (Booking $record) => $record->payment_status === 'Pendiente')
+                    ->action(fn (Booking $record) => $record->markAsPaid())
+                    ->requiresConfirmation()
+                    ->modalHeading('¿Marcar reserva como pagada?')
+                    ->modalDescription('Confirma que has recibido el pago para esta reserva.')
+                    ->modalSubmitActionLabel('Sí, marcar como pagada')
+                    ->successNotificationTitle('Reserva marcada como pagada'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    // Otras acciones en masa como:
+
                     Tables\Actions\BulkAction::make('confirmSelected')
                         ->label('Confirmar seleccionadas')
                         ->color('success')
@@ -185,6 +208,23 @@ class BookingResource extends Resource
                                 }
                             });
                         }),
+
+                    Tables\Actions\BulkAction::make('markSelectedAsPaid')
+                        ->label('Marcar como pagadas')
+                        ->color('success')
+                        ->icon('heroicon-o-banknotes')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                if ($record->payment_status === 'Pendiente') {
+                                    $record->markAsPaid();
+                                }
+                            });
+                        })
+                        ->requiresConfirmation()
+                        ->modalHeading('¿Marcar reservas seleccionadas como pagadas?')
+                        ->modalDescription('Confirma que has recibido el pago para estas reservas.')
+                        ->modalSubmitActionLabel('Sí, marcar como pagadas')
+                        ->successNotificationTitle('Reservas marcadas como pagadas'),
                 ]),
             ]);
     }
@@ -200,8 +240,6 @@ class BookingResource extends Resource
     {
         return [
             'index' => Pages\ListBookings::route('/'),
-            // Se remueve el 'create' ya que no queremos permitir la creación manual
-            // 'create' => Pages\CreateBooking::route('/create'),
             'view' => Pages\ViewBooking::route('/{record}'),
             'edit' => Pages\EditBooking::route('/{record}/edit'),
         ];
