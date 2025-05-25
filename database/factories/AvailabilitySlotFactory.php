@@ -9,28 +9,19 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AvailabilitySlotFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
     protected $model = AvailabilitySlot::class;
 
-    /**
-     * Define the model's default state.
-     */
     public function definition(): array
     {
         return [
             'coach_id' => Coach::factory(),
             'sport_id' => Sport::factory(),
-            'weekday' => fake()->numberBetween(-8, 8),
+            'weekday' => fake()->numberBetween(0, 6),
             'start_time' => fake()->time(),
             'end_time' => fake()->time(),
             'is_online' => fake()->boolean(),
             'location' => fake()->word(),
-            'capacity' => fake()->randomNumber(),
-            'unique' => fake()->word(),
+            'capacity' => fake()->numberBetween(1, 20), // Limitado a valores pequeños
         ];
     }
 }

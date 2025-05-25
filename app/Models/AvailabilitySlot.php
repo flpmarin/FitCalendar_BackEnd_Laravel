@@ -24,7 +24,6 @@ class AvailabilitySlot extends Model
         'is_online',
         'location',
         'capacity',
-        'unique',
     ];
 
     /**
