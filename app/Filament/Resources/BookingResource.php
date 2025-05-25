@@ -95,7 +95,8 @@ class BookingResource extends Resource
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
 
-                Tables\Columns\BadgeColumn::make('status')
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
                     ->label('Estado')
                     ->colors([
                         'danger' => 'Cancelled',
@@ -104,7 +105,8 @@ class BookingResource extends Resource
                         'gray' => fn ($state) => !in_array($state, ['Cancelled', 'Pending', 'Confirmed', 'Completed']),
                     ]),
 
-                Tables\Columns\BadgeColumn::make('payment_status')
+                Tables\Columns\TextColumn::make('payment_status')
+                    ->badge()
                     ->label('Estado de pago')
                     ->colors([
                         'warning' => 'Pendiente',

@@ -7,6 +7,8 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\API\BookingPaymentController;
+use App\Http\Controllers\API\BookingController;
+use App\Http\Controllers\API\AvailabilitySlotController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -42,8 +44,20 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Endpoints públicos (no requieren autenticación)
+Route::get('/coaches/{coachId}/availability-slots', [AvailabilitySlotController::class, 'getByCoach']);
+Route::get('/available-coaches', [BookingController::class, 'getAvailableCoaches']);
+
+
+// Rutas protegidas que requieren autenticación
 Route::middleware('auth:sanctum')->group(function () {
-    // Ruta para marcar una reserva como pagada
+    // Rutas para disponibilidad recurrente
+    Route::apiResource('availability-slots', AvailabilitySlotController::class);
+
+    // Rutas para reservas
+    Route::apiResource('bookings', BookingController::class)->except(['update', 'destroy']);
+    Route::patch('bookings/{id}/cancel', [BookingController::class, 'cancel']);
+
+    // Ruta para marcar una reserva como pagada (ya existente)
     Route::patch('bookings/{id}/mark-as-paid', [BookingPaymentController::class, 'markAsPaid']);
 });
-
