@@ -15,17 +15,14 @@ else
     echo "Archivo artisan encontrado"
 fi
 
-# Instalar dependencias de Composer
+# Instalar dependencias de Composer si no existen
 if [ ! -d "/var/www/html/vendor" ]; then
     echo "Instalando dependencias de Composer..."
-    composer install --no-interaction --no-dev --optimize-autoloader
+    composer install --no-interaction --optimize-autoloader
 fi
 
 # Generar clave de la aplicación si no existe
-if [ -z "$(php artisan key:status | grep 'Application key set successfully')" ]; then
-    echo "Generando clave de la aplicación..."
-    php artisan key:generate --force
-fi
+php artisan key:generate --force
 
 # Configurar permisos correctos
 chown -R sail:sail /var/www/html/storage /var/www/html/bootstrap/cache
@@ -45,6 +42,13 @@ php artisan view:cache
 echo "Creando enlace simbólico para almacenamiento..."
 php artisan storage:link --force
 
-# Iniciar supervisor para gestionar el servicio web
-echo "Iniciando aplicación..."
+# Asegurarse de que la variable PORT esté definida
+if [ -z "$PORT" ]; then
+    export PORT=8000
+fi
+
+echo "Iniciando aplicación en puerto $PORT..."
+export SUPERVISOR_PHP_COMMAND="/usr/bin/php -d variables_order=EGPCS /var/www/html/artisan serve --host=0.0.0.0 --port=$PORT"
+
+# Iniciar supervisor
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
