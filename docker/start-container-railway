@@ -2,53 +2,106 @@
 
 cd /var/www/html
 
-# Verificar estructura de directorios
-echo "Verificando estructura de directorios..."
-ls -la
-echo "Directorio actual: $(pwd)"
+echo "=== Iniciando FitCalendar en Railway ==="
 
-# Verificar archivo artisan
-if [ ! -f "/var/www/html/artisan" ]; then
-    echo "ERROR: No se encuentra el archivo artisan"
-    exit 1
+# Verificar el usuario actual
+echo "Usuario actual: $(whoami)"
+echo "ID de usuario: $(id -u)"
+echo "ID de grupo: $(id -g)"
+
+# Cambiar permisos
+chmod -R 777 /var/www/html/storage
+chmod -R 777 /var/www/html/bootstrap/cache
+
+# Configurar APP_URL (backend)
+if [ -n "$RAILWAY_PUBLIC_DOMAIN" ]; then
+  APP_URL_VALUE="https://$RAILWAY_PUBLIC_DOMAIN"
 else
-    echo "Archivo artisan encontrado"
+  APP_URL_VALUE="${APP_URL:-http://localhost:$PORT}"
 fi
 
-# Instalar dependencias de Composer si no existen
-if [ ! -d "/var/www/html/vendor" ]; then
-    echo "Instalando dependencias de Composer..."
-    composer install --no-interaction --optimize-autoloader
+# Configuración temporal para FRONTEND_URL (permitir cualquier origen)
+FRONTEND_URL_VALUE=${FRONTEND_URL:-"*"}
+
+echo "Configurando APP_URL (backend): $APP_URL_VALUE"
+echo "Configurando FRONTEND_URL (frontend): $FRONTEND_URL_VALUE"
+
+# Generar archivo .env
+cat > .env << EOL
+APP_NAME=FitCalendar
+APP_ENV=production
+APP_KEY=${APP_KEY:-base64:JnHQyUQrfdf1ZCoNpC6AepH5aBy7zEXXNYR+uTpXeqU=}
+APP_DEBUG=${APP_DEBUG:-false}
+APP_URL=$APP_URL_VALUE
+FRONTEND_URL=$FRONTEND_URL_VALUE
+
+LOG_CHANNEL=stderr
+LOG_LEVEL=${LOG_LEVEL:-error}
+
+DB_CONNECTION=pgsql
+DB_HOST=${PGHOST}
+DB_PORT=${PGPORT:-5432}
+DB_DATABASE=${PGDATABASE}
+DB_USERNAME=${PGUSER}
+DB_PASSWORD=${PGPASSWORD}
+
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=true
+SESSION_SECURE_COOKIE=true
+
+# Configuración permisiva para desarrollo
+SANCTUM_STATEFUL_DOMAINS=$APP_URL_VALUE
+CORS_ALLOWED_ORIGINS=$FRONTEND_URL_VALUE
+
+BROADCAST_CONNECTION=log
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=database
+
+CACHE_STORE=database
+CACHE_PREFIX=fitcalendar_
+
+MAIL_MAILER=smtp
+MAIL_HOST=${MAIL_HOST:-mailpit}
+MAIL_PORT=${MAIL_PORT:-1025}
+MAIL_USERNAME=${MAIL_USERNAME}
+MAIL_PASSWORD=${MAIL_PASSWORD}
+MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-no-reply@fitcalendar.app}
+MAIL_FROM_NAME=FitCalendar
+
+VITE_APP_NAME=FitCalendar
+EOL
+
+echo "Archivo .env generado para Railway"
+
+# Limpiar la caché
+echo "=== Limpiando caché ==="
+php artisan optimize:clear
+
+# Regenerar clave si es necesario
+if [ -z "$APP_KEY" ]; then
+    echo "=== Generando APP_KEY ==="
+    php artisan key:generate --force
 fi
-
-# Generar clave de la aplicación si no existe
-php artisan key:generate --force
-
-# Configurar permisos correctos
-chown -R sail:sail /var/www/html/storage /var/www/html/bootstrap/cache
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Ejecutar migraciones
-echo "Ejecutando migraciones..."
-php artisan migrate --force
+echo "=== Ejecutando migraciones ==="
+php artisan migrate --force || echo "Error al ejecutar migraciones"
 
-# Optimizar aplicación
-echo "Optimizando aplicación..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
-# Enlace simbólico para almacenamiento
-echo "Creando enlace simbólico para almacenamiento..."
-php artisan storage:link --force
-
-# Asegurarse de que la variable PORT esté definida
-if [ -z "$PORT" ]; then
-    export PORT=8000
+# Determinar cómo iniciar la aplicación
+if command -v supervisord &> /dev/null && [ -f "/etc/supervisor/conf.d/supervisord.conf" ]; then
+    # Si existe supervisor, usarlo
+    echo "=== Iniciando aplicación con supervisord ==="
+    if [ "$(whoami)" = "root" ] && command -v gosu &> /dev/null && id sail &> /dev/null; then
+        echo "Cambiando a usuario sail..."
+        export HOME=/home/sail
+        exec gosu sail supervisord -c /etc/supervisor/conf.d/supervisord.conf
+    else
+        echo "Ejecutando supervisor como usuario actual..."
+        exec supervisord -c /etc/supervisor/conf.d/supervisord.conf
+    fi
+else
+    # Iniciar el servidor web directamente con artisan
+    echo "=== Iniciando servidor web con artisan ==="
+    exec php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
 fi
-
-echo "Iniciando aplicación en puerto $PORT..."
-export SUPERVISOR_PHP_COMMAND="/usr/bin/php -d variables_order=EGPCS /var/www/html/artisan serve --host=0.0.0.0 --port=$PORT"
-
-# Iniciar supervisor
-exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
