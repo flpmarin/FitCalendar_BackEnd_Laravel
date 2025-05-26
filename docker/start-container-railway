@@ -1,33 +1,18 @@
+
 #!/usr/bin/env bash
 
-# Establecer variables de entorno para PostgreSQL
-if [ ! -z "$PGDATABASE" ]; then
-    export DB_CONNECTION=${DB_CONNECTION:-pgsql}
-    export DB_HOST=${DB_HOST:-$PGHOST}
-    export DB_PORT=${DB_PORT:-$PGPORT}
-    export DB_DATABASE=${DB_DATABASE:-$PGDATABASE}
-    export DB_USERNAME=${DB_USERNAME:-$PGUSER}
-    export DB_PASSWORD=${DB_PASSWORD:-$PGPASSWORD}
+if [ ! -z "$WWWUSER" ]; then
+    usermod -u $WWWUSER sail
 fi
 
-# Asegurar permisos
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Instalar dependencias
-if [ ! -d "vendor" ]; then
-    composer install --no-interaction --optimize-autoloader
+if [ ! -d /.composer ]; then
+    mkdir /.composer
 fi
 
-# Ejecutar migraciones
-php artisan migrate --force
+chmod -R ugo+rw /.composer
 
-# Limpiar caches
-php artisan optimize:clear
-
-# Establecer caches para producción
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
-# Iniciar servidor
-php artisan serve --host=0.0.0.0 --port=8000
+if [ $# -gt 0 ]; then
+    exec gosu $WWWUSER "$@"
+else
+    exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+fi
