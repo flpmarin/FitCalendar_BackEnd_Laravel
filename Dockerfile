@@ -70,6 +70,11 @@ RUN chmod +x /usr/local/bin/start-container
 COPY docker/start-container-railway /usr/local/bin/start-container-railway
 RUN chmod +x /usr/local/bin/start-container-railway
 
+# Copiar todo el código fuente de la aplicación
+COPY . /var/www/html/
+RUN chown -R sail:sail /var/www/html
+RUN chmod +x /var/www/html/artisan
+
 EXPOSE 80/tcp
 EXPOSE 8000
 

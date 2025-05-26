@@ -1,19 +1,50 @@
 #!/usr/bin/env bash
 
-if [ $# -gt 0 ]; then
-    exec "$@"
+cd /var/www/html
+
+# Verificar estructura de directorios
+echo "Verificando estructura de directorios..."
+ls -la
+echo "Directorio actual: $(pwd)"
+
+# Verificar archivo artisan
+if [ ! -f "/var/www/html/artisan" ]; then
+    echo "ERROR: No se encuentra el archivo artisan"
+    exit 1
+else
+    echo "Archivo artisan encontrado"
 fi
 
-# Optimizar Laravel para producción
+# Instalar dependencias de Composer
+if [ ! -d "/var/www/html/vendor" ]; then
+    echo "Instalando dependencias de Composer..."
+    composer install --no-interaction --no-dev --optimize-autoloader
+fi
+
+# Generar clave de la aplicación si no existe
+if [ -z "$(php artisan key:status | grep 'Application key set successfully')" ]; then
+    echo "Generando clave de la aplicación..."
+    php artisan key:generate --force
+fi
+
+# Configurar permisos correctos
+chown -R sail:sail /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Ejecutar migraciones
+echo "Ejecutando migraciones..."
+php artisan migrate --force
+
+# Optimizar aplicación
+echo "Optimizando aplicación..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Ejecutar migraciones
-php artisan migrate --force
+# Enlace simbólico para almacenamiento
+echo "Creando enlace simbólico para almacenamiento..."
+php artisan storage:link --force
 
-# Crear enlace simbólico de storage si no existe
-php artisan storage:link
-
-# Iniciar servidor en el puerto que proporciona Railway
-php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+# Iniciar supervisor para gestionar el servicio web
+echo "Iniciando aplicación..."
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
