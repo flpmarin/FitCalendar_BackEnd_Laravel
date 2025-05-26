@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Coach;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,14 @@ class RegisteredUserController extends Controller
             'role' => $request->role,
             'language' => $request->language,
         ]);
+
+        // Si el usuario es un entrenador, crear automáticamente el registro en la tabla coaches
+        if ($request->role === 'Coach') {
+            $coach = new Coach();
+            $coach->user_id = $user->id;
+            // Puedes establecer valores predeterminados para otros campos si son obligatorios
+            $coach->save();
+        }
 
         event(new Registered($user));
 
