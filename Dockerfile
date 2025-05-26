@@ -19,7 +19,7 @@ COPY --chown=laravel:laravel . .
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-dev --optimize-autoloader \
- && npm ci --omit=dev \
+ && npm install --omit=dev --no-audit --progress=false \
  && npm run build
 
 RUN chmod -R ug+rwx storage bootstrap/cache
