@@ -1,27 +1,33 @@
-# ---- Etapa runtime -------------------------------------------------
+# ---------- Etapa 1: build frontend --------------------
+FROM node:20-alpine AS node-build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+# Copiamos todos los archivos necesarios para el build
+COPY resources ./resources
+# Copia los archivos de configuración si existen
+COPY *.js ./
+RUN npm run build
+
+# ---------- Etapa 2: runtime PHP ----------------------
 FROM laravelsail/php83-composer:latest
 USER root
 
-# 1) Extensiones nativas que tu app necesita
+# PHP + extensiones
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libicu-dev libpq-dev g++ \
     && docker-php-ext-install -j$(nproc) intl pdo_pgsql \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 2) Copia del código
 WORKDIR /var/www/html
 COPY --chown=laravel:laravel . .
+# Copiamos los assets generados - ajustamos la ruta según el sistema de build
+COPY --from=node-build /app/public/build ./public/build
 
-# 3) Dependencias y build frontend
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-dev --optimize-autoloader \
- && npm ci --omit=dev \
- && npm run build
+ && chmod -R ug+rwx storage bootstrap/cache
 
-# 4) Permisos para storage y cache
-RUN chmod -R ug+rwx storage bootstrap/cache
-
-# 5) Puerto que expone Railway (variable $PORT)
 ENV PORT=${PORT:-8080}
 EXPOSE ${PORT}
 
