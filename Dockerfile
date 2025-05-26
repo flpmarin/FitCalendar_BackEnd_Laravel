@@ -6,24 +6,26 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_pgsql intl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Establecer directorio de trabajo
 WORKDIR /var/www/html
 
-# Copiar solo lo necesario primero (para cache)
+# 1. Copia solo composer.json y lock para cache
 COPY composer.json composer.lock ./
 
-# Instalar dependencias
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# 2. Instala dependencias PHP (sin ejecutar scripts)
+RUN COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_DISABLE_INSTALLER_PLUGINS=1 \
+    composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
-# Ahora sí: copiar el resto del código
+# 3. Ahora sí, copia todo
 COPY . .
 
-# Configurar permisos
+# 4. Ejecutar scripts que dependen de `artisan`
+RUN php artisan package:discover --ansi
+
+# 5. Permisos
 RUN chmod -R 775 storage bootstrap/cache
 
-# Exponer puerto que Railway usa
+# 6. Puerto expuesto en Railway
 ENV PORT=8080
 EXPOSE 8080
 
-# Arrancar servidor Laravel
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
