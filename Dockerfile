@@ -76,7 +76,6 @@ COPY . /var/www/html/
 RUN chown -R sail:sail /var/www/html
 RUN chmod +x /var/www/html/artisan
 
-EXPOSE 80/tcp
 EXPOSE 8000
 
 ENTRYPOINT ["start-container-railway"]
