@@ -15,7 +15,27 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Health check endpoint para Railway
-Route::get('/health', fn () => response()->json(['status' => 'ok']));
+//Route::get('/health', fn () => response()->json(['status' => 'ok']));
+
+use Illuminate\Support\Facades\DB;
+
+Route::get('/health', function () {
+    try {
+        DB::connection()->getPdo(); // fuerza conexión DB
+        return response()->json([
+            'status' => 'ok',
+            'db' => DB::connection()->getDatabaseName(),
+            'env' => app()->environment(),
+            'url' => config('app.url'),
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
+
 
 Route::post('/register', [RegisteredUserController::class, 'store'])
     ->middleware('guest')
