@@ -9,6 +9,8 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\API\BookingPaymentController;
 use App\Http\Controllers\API\BookingController;
 use App\Http\Controllers\API\AvailabilitySlotController;
+use App\Http\Controllers\API\CoachController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -51,6 +53,12 @@ Route::get('/available-coaches', [BookingController::class, 'getAvailableCoaches
 
 // Rutas protegidas que requieren autenticación
 Route::middleware('auth:sanctum')->group(function () {
+    // Perfil Coach
+    Route::get('/coach/profile', [CoachController::class, 'getProfile']);
+    Route::put('/coach/profile', [CoachController::class, 'updateProfile']);
+    Route::post('/coach/sports', [CoachController::class, 'assignSports']);
+
+
     // Rutas para disponibilidad recurrente
     Route::apiResource('availability-slots', AvailabilitySlotController::class);
 
