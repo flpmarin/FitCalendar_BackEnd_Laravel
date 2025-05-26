@@ -30,6 +30,101 @@ POST /api/register
 POST /api/logout
 ```
 _Requiere autenticación_
+
+## Gestión de Perfil de Entrenador (Coach)
+
+### Obtener perfil de entrenador
+```
+GET /api/coach/profile
+``` 
+_Requiere autenticación como entrenador_
+
+**Respuesta:**
+```json
+{
+  "id": 1,
+  "user_id": 1,
+  "description": "Entrenador profesional con 10 años de experiencia",
+  "city": "Barcelona",
+  "country": "España",
+  "coach_type": "Personal Trainer",
+  "verified": true,
+  "organization_id": 1,
+  "payment_info": "IBAN ES1234567890123456789012",
+  "created_at": "2023-01-01T00:00:00.000000Z",
+  "updated_at": "2023-01-01T00:00:00.000000Z",
+  "sports": [
+    {
+      "id": 1,
+      "name": "Yoga",
+      "created_at": "2023-01-01T00:00:00.000000Z",
+      "updated_at": "2023-01-01T00:00:00.000000Z",
+      "pivot": {
+        "coach_id": 1,
+        "sport_id": 1,
+        "specific_price": "35.00",
+        "specific_location": "Centro Deportivo",
+        "session_duration_minutes": 60
+      }
+    }
+  ],
+  "organization": {
+    "id": 1,
+    "name": "FitGym",
+    "created_at": "2023-01-01T00:00:00.000000Z",
+    "updated_at": "2023-01-01T00:00:00.000000Z"
+  }
+}
+```
+### Actualizar perfil de entrenador
+``` 
+PUT /api/coach/profile
+```
+_Requiere autenticación como entrenador_
+**Parámetros de solicitud:**
+- `description`: Descripción o biografía del entrenador (opcional)
+- `city`: Ciudad donde opera el entrenador (opcional)
+- `country`: País donde opera el entrenador (opcional)
+- : Tipo de entrenador (opcional) `coach_type`
+- : ID de la organización a la que pertenece el entrenador (opcional) `organization_id`
+- : Información de pago del entrenador (opcional) `payment_info`
+
+**Respuesta:**
+``` json
+{
+  "message": "Perfil de entrenador actualizado correctamente",
+  "coach": {
+    "id": 1,
+    "user_id": 1,
+    "description": "Entrenador profesional con 15 años de experiencia",
+    "city": "Madrid",
+    "country": "España",
+    "coach_type": "Personal Trainer",
+    "verified": true,
+    "organization_id": 1,
+    "payment_info": "IBAN ES1234567890123456789012",
+    "created_at": "2023-01-01T00:00:00.000000Z",
+    "updated_at": "2023-01-02T00:00:00.000000Z"
+  }
+}
+```
+### Asignar deportes al entrenador
+``` 
+POST /api/coach/sports
+```
+_Requiere autenticación como entrenador_
+**Parámetros de solicitud:**
+- : Array de deportes (requerido)
+    - `id`: ID del deporte (requerido)
+    - : Precio específico para este deporte (opcional) `specific_price`
+    - : Ubicación específica para este deporte (opcional) `specific_location`
+    - : Duración de la sesión en minutos (opcional, mínimo 15) `session_duration_minutes`
+
+`sports`
+
+**Ejemplo de solicitud:**
+
+
 ## Gestión de Disponibilidad (AvailabilitySlot)
 ### Listar franjas de disponibilidad (para entrenadores)
 ``` 
