@@ -1,26 +1,21 @@
-FROM ghcr.io/laravelphp/sail-8.2:latest
 
-# Configurar directorio de trabajo
+# ---- Etapa runtime -------------------------------------------------
+FROM laravelsail/php82-composer:latest
+
+# 1) Código
 WORKDIR /var/www/html
+COPY --chown=laravel:laravel . .
 
-# Copiar archivos del proyecto
-COPY . .
+# 2) Dependencias
+RUN composer install --no-dev --optimize-autoloader \
+ && npm ci --omit=dev \
+ && npm run build
 
-# Instalar dependencias PHP para producción
-RUN composer install --no-dev --optimize-autoloader
+# 3) Permisos
+RUN chmod -R ug+rwx storage bootstrap/cache
 
-# Compilar assets de frontend (si usas Vite/Laravel Mix)
-RUN npm ci && npm run build
+# 4) Railway expone $PORT en runtime; úsalo
+ENV PORT=${PORT:-8000}
+EXPOSE ${PORT}
 
-# Permisos para storage y cache
-RUN chmod -R 775 storage bootstrap/cache
-RUN chown -R sail:sail storage bootstrap/cache
-
-# Configuración para PostgreSQL
-# La imagen ya incluye el cliente PostgreSQL
-
-# Exponer puerto
-EXPOSE 8000
-
-# Configurar el comando para iniciar la aplicación
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=${PORT}"]
