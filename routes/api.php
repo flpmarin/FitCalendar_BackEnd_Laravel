@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 // Health check endpoint para Railway
 Route::get('/health', fn () => response()->json(['status' => 'ok']));
 
+Route::get('/test-path', fn () => 'ok');
+
 
 Route::post('/register', [RegisteredUserController::class, 'store'])
     ->middleware('guest')
