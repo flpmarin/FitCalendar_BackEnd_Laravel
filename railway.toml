@@ -4,4 +4,5 @@ builder = "dockerfile"
 [deploy]
 healthcheckPath = "/api/health"
 healthcheckTimeout = 10
+port = "8080"
 
