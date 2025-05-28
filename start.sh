@@ -9,7 +9,7 @@ php artisan route:cache
 php artisan view:cache
 
 # (2) MIGRACIONES siempre que arranque
-php artisan migrate --force --seed
+php artisan migrate --force
 
 # (3) LEVANTAR el servidor
 php artisan serve --host=0.0.0.0 --port="${PORT:-8000}"
