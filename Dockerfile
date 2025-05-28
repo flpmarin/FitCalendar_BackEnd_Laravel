@@ -2,6 +2,7 @@ FROM php:8.3-fpm
 
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
+    bash postgresql-client \
     libpq-dev libzip-dev zip unzip git curl libicu-dev g++ \
     && docker-php-ext-install pdo_pgsql intl zip opcache \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
