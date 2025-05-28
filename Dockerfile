@@ -24,7 +24,7 @@ COPY . .
 RUN php artisan package:discover --ansi
 
 # Opcional: cache de configuración y rutas
-RUN php artisan config:cache && php artisan route:cache
+# RUN php artisan config:cache && php artisan route:cache
 
 # Asignar permisos
 RUN chmod -R 775 storage bootstrap/cache
@@ -33,4 +33,6 @@ RUN chmod -R 775 storage bootstrap/cache
 ENV PORT=8000
 EXPOSE 8000
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+# CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+CMD ["/bin/bash", "/var/www/html/start.sh"]
+
