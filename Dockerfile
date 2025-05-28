@@ -11,25 +11,26 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copiar y preparar dependencias
+# Copiar primero los archivos necesarios para instalar dependencias
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Copiar el resto del código
+# Instalar dependencias sin ejecutar scripts (porque aún no hay artisan)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+
+# Ahora copiar el resto del proyecto, incluido artisan
 COPY . .
 
-# Crear APP_KEY y cache config (opcional)
+# Ahora sí, ejecutar scripts que usan artisan
+RUN php artisan package:discover --ansi
+
+# Opcional: cache de configuración y rutas
 RUN php artisan config:cache && php artisan route:cache
 
-# Permisos
+# Asignar permisos
 RUN chmod -R 775 storage bootstrap/cache
 
-# Variables
+# Variables y puertos
 ENV PORT=8080
-
 EXPOSE 8080
 
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-CMD ["sh", "/start.sh"]
-
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
