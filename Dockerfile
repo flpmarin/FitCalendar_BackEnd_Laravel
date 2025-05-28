@@ -1,31 +1,35 @@
-FROM laravelsail/php83-composer:latest
+FROM php:8.2-fpm
 
-# Instalar extensiones necesarias
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
-    libpq-dev libicu-dev g++ \
-    && docker-php-ext-install pdo_pgsql intl \
+    libpq-dev libzip-dev zip unzip git curl libicu-dev g++ \
+    && docker-php-ext-install pdo_pgsql intl zip opcache \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Instalar Composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# 1. Copia solo composer.json y lock para cache
+# Copiar y preparar dependencias
 COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# 2. Instala dependencias PHP (sin ejecutar scripts)
-RUN COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_DISABLE_INSTALLER_PLUGINS=1 \
-    composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
-
-# 3. Ahora sí, copia todo
+# Copiar el resto del código
 COPY . .
 
-# 4. Ejecutar scripts que dependen de `artisan`
-RUN php artisan package:discover --ansi
+# Crear APP_KEY y cache config (opcional)
+RUN php artisan config:cache && php artisan route:cache
 
-# 5. Permisos
+# Permisos
 RUN chmod -R 775 storage bootstrap/cache
 
-# 6. Puerto expuesto en Railway
+# Variables
 ENV PORT=8080
+
 EXPOSE 8080
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+CMD ["sh", "/start.sh"]
+

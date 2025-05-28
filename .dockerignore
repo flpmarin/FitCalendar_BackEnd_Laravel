@@ -49,7 +49,6 @@ fitcalendar-collection.json
 # Archivos específicos de desarrollo
 Dockerfile.dev
 docker-compose.dev.yml
-.dockerignore
 draft.yaml
 
 # Otros archivos que no son necesarios en producción
