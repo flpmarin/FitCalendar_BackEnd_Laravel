@@ -25,3 +25,9 @@ ENV PORT=8000
 EXPOSE 8000
 
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+
+# Da permisos al script que arrancará Laravel
+RUN chmod +x /var/www/html/start.sh
+
+# Comando que ejecuta tu app
+CMD ["/bin/bash", "/var/www/html/start.sh"]
