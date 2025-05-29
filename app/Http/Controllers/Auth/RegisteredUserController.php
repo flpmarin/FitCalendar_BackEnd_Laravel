@@ -25,7 +25,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string', 'in:Student,Coach,Admin'],
-            'language' => ['required', 'string'],
+            'language' => ['nullable', 'string'],
         ]);
 
         $user = User::create([
@@ -33,7 +33,8 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->string('password')),
             'role' => $request->role,
-            'language' => $request->language,
+            'language' => $request->language ?? 'es', // Valor predeterminado 'es' si no se proporciona
+
         ]);
 
         // Si el usuario es un entrenador, crear automáticamente el registro en la tabla coaches

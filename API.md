@@ -1,505 +1,251 @@
-# API de FitCalendar
-## Autenticación
-Todos los endpoints protegidos requieren autenticación mediante token Bearer de Sanctum.
-### Login
-``` 
+# 📘 Documentación de la API de FitCalendar
+
+## 🛡️ Autenticación
+
+Todos los endpoints protegidos requieren autenticación mediante token Bearer (Sanctum).
+
+### 🔐 Login
+
+```
 POST /api/login
 ```
+
 **Parámetros de solicitud:**
-- `email`: Correo electrónico del usuario
-- `password`: Contraseña del usuario
+
+* `email`: Correo electrónico del usuario
+* `password`: Contraseña del usuario
 
 **Respuesta:**
-``` json
+
+```json
 {
   "token": "token_de_autenticacion"
 }
 ```
-### Registro
-``` 
+
+### 📝 Registro de usuario
+
+```
 POST /api/register
 ```
-**Parámetros de solicitud:**
-- `name`: Nombre completo
-- `email`: Correo electrónico
-- `password`: Contraseña
-- : Confirmación de contraseña `password_confirmation`
 
-### Cerrar sesión
-``` 
+**Parámetros de solicitud:**
+
+* `name`: Nombre completo (requerido)
+* `email`: Correo electrónico (requerido)
+* `password`: Contraseña (requerido)
+* `password_confirmation`: Confirmación de contraseña (requerido)
+* `role`: "Student" o "Coach" (requerido)
+* `language`: Código de idioma (por ejemplo, "es", "en") (opcional ->por defecto 'es')
+
+### 🚪 Cerrar sesión
+
+```
 POST /api/logout
 ```
-_Requiere autenticación_
 
-## Gestión de Perfil de Entrenador (Coach)
+*Requiere autenticación*
 
-### Obtener perfil de entrenador
+---
+
+## 👤 Perfil de Entrenador
+
+### Obtener perfil
+
 ```
 GET /api/coach/profile
-``` 
-_Requiere autenticación como entrenador_
+```
 
-**Respuesta:**
+*Requiere autenticación como entrenador*
+
+**Respuesta:** JSON con datos del entrenador, organización y deportes asignados.
+
+### Actualizar perfil
+
+```
+PUT /api/coach/profile
+```
+
+*Requiere autenticación como entrenador*
+
+**Parámetros de solicitud:**
+
+* `description`: Biografía del entrenador (opcional)
+* `city`: Ciudad (opcional)
+* `country`: País (opcional)
+* `coach_type`: Tipo de entrenador (opcional)
+* `organization_id`: ID de organización (opcional)
+* `payment_info`: Información de pago (opcional)
+
+### Asignar deportes
+
+```
+POST /api/coach/sports
+```
+
+*Requiere autenticación como entrenador*
+
+**Parámetros de solicitud:**
+
+* `sports`: Array de objetos con:
+
+    * `id`: ID del deporte (requerido)
+    * `specific_price`: Precio específico (opcional)
+    * `specific_location`: Ubicación específica (opcional)
+    * `session_duration_minutes`: Duración de sesión (opcional)
+
+**Ejemplo:**
+
 ```json
 {
-  "id": 1,
-  "user_id": 1,
-  "description": "Entrenador profesional con 10 años de experiencia",
-  "city": "Barcelona",
-  "country": "España",
-  "coach_type": "Personal Trainer",
-  "verified": true,
-  "organization_id": 1,
-  "payment_info": "IBAN ES1234567890123456789012",
-  "created_at": "2023-01-01T00:00:00.000000Z",
-  "updated_at": "2023-01-01T00:00:00.000000Z",
   "sports": [
     {
       "id": 1,
-      "name": "Yoga",
-      "created_at": "2023-01-01T00:00:00.000000Z",
-      "updated_at": "2023-01-01T00:00:00.000000Z",
-      "pivot": {
-        "coach_id": 1,
-        "sport_id": 1,
-        "specific_price": "35.00",
-        "specific_location": "Centro Deportivo",
-        "session_duration_minutes": 60
-      }
+      "specific_price": 35.00,
+      "specific_location": "Centro Deportivo",
+      "session_duration_minutes": 60
     }
-  ],
-  "organization": {
-    "id": 1,
-    "name": "FitGym",
-    "created_at": "2023-01-01T00:00:00.000000Z",
-    "updated_at": "2023-01-01T00:00:00.000000Z"
-  }
+  ]
 }
 ```
-### Actualizar perfil de entrenador
-``` 
-PUT /api/coach/profile
+
+---
+
+## 📅 Disponibilidad
+
+### Listar franjas de disponibilidad
+
 ```
-_Requiere autenticación como entrenador_
-**Parámetros de solicitud:**
-- `description`: Descripción o biografía del entrenador (opcional)
-- `city`: Ciudad donde opera el entrenador (opcional)
-- `country`: País donde opera el entrenador (opcional)
-- : Tipo de entrenador (opcional) `coach_type`
-- : ID de la organización a la que pertenece el entrenador (opcional) `organization_id`
-- : Información de pago del entrenador (opcional) `payment_info`
-
-**Respuesta:**
-``` json
-{
-  "message": "Perfil de entrenador actualizado correctamente",
-  "coach": {
-    "id": 1,
-    "user_id": 1,
-    "description": "Entrenador profesional con 15 años de experiencia",
-    "city": "Madrid",
-    "country": "España",
-    "coach_type": "Personal Trainer",
-    "verified": true,
-    "organization_id": 1,
-    "payment_info": "IBAN ES1234567890123456789012",
-    "created_at": "2023-01-01T00:00:00.000000Z",
-    "updated_at": "2023-01-02T00:00:00.000000Z"
-  }
-}
-```
-### Asignar deportes al entrenador
-``` 
-POST /api/coach/sports
-```
-_Requiere autenticación como entrenador_
-**Parámetros de solicitud:**
-- : Array de deportes (requerido)
-    - `id`: ID del deporte (requerido)
-    - : Precio específico para este deporte (opcional) `specific_price`
-    - : Ubicación específica para este deporte (opcional) `specific_location`
-    - : Duración de la sesión en minutos (opcional, mínimo 15) `session_duration_minutes`
-
-`sports`
-
-**Ejemplo de solicitud:**
-
-
-## Gestión de Disponibilidad (AvailabilitySlot)
-### Listar franjas de disponibilidad (para entrenadores)
-``` 
 GET /api/availability-slots
 ```
-_Requiere autenticación como entrenador_
-**Respuesta:**
-``` json
-[
-  {
-    "id": 1,
-    "coach_id": 1,
-    "sport_id": 1,
-    "weekday": 1,
-    "start_time": "10:00",
-    "end_time": "11:00",
-    "is_online": false,
-    "location": "Gimnasio Central",
-    "capacity": 1,
-    "created_at": "2023-01-01T00:00:00.000000Z",
-    "updated_at": "2023-01-01T00:00:00.000000Z",
-    "sport": {
-      "id": 1,
-      "name": "Yoga",
-      "created_at": "2023-01-01T00:00:00.000000Z",
-      "updated_at": "2023-01-01T00:00:00.000000Z"
-    }
-  }
-]
-```
+
+*Requiere autenticación como entrenador*
+
 ### Crear franja de disponibilidad
-``` 
+
+```
 POST /api/availability-slots
 ```
-_Requiere autenticación como entrenador_
-**Parámetros de solicitud:**
-- : ID del deporte (requerido) `sport_id`
-- `weekday`: Día de la semana (0-6, donde 0 es domingo) (requerido)
-- : Hora de inicio en formato HH:MM (requerido) `start_time`
-- : Hora de fin en formato HH:MM (requerido, debe ser posterior a start_time) `end_time`
-- : Booleano que indica si la sesión es online (requerido) `is_online`
-- `location`: Ubicación de la sesión (opcional)
-- `capacity`: Capacidad máxima (opcional, mínimo 1)
 
-**Respuesta:**
-``` json
-{
-  "message": "Franja de disponibilidad creada correctamente",
-  "availabilitySlot": {
-    "id": 1,
-    "coach_id": 1,
-    "sport_id": 1,
-    "weekday": 1,
-    "start_time": "10:00",
-    "end_time": "11:00",
-    "is_online": false,
-    "location": "Gimnasio Central",
-    "capacity": 1,
-    "created_at": "2023-01-01T00:00:00.000000Z",
-    "updated_at": "2023-01-01T00:00:00.000000Z"
-  }
-}
+**Parámetros:**
+
+* `sport_id`: ID del deporte (requerido)
+* `weekday`: Día (0=domingo a 6=sábado) (requerido)
+* `start_time`: HH\:MM (requerido)
+* `end_time`: HH\:MM (requerido)
+* `is_online`: true/false (requerido)
+* `location`: Ubicación (opcional)
+* `capacity`: Capacidad (opcional)
+
+### Ver franja de disponibilidad
+
 ```
-### Obtener detalles de una franja de disponibilidad
-``` 
 GET /api/availability-slots/{id}
 ```
-_Requiere autenticación como entrenador_
-**Respuesta:**
-``` json
-{
-  "id": 1,
-  "coach_id": 1,
-  "sport_id": 1,
-  "weekday": 1,
-  "start_time": "10:00",
-  "end_time": "11:00",
-  "is_online": false,
-  "location": "Gimnasio Central",
-  "capacity": 1,
-  "created_at": "2023-01-01T00:00:00.000000Z",
-  "updated_at": "2023-01-01T00:00:00.000000Z",
-  "sport": {
-    "id": 1,
-    "name": "Yoga",
-    "created_at": "2023-01-01T00:00:00.000000Z",
-    "updated_at": "2023-01-01T00:00:00.000000Z"
-  }
-}
-```
+
+*Requiere autenticación como entrenador*
+
 ### Actualizar franja de disponibilidad
-``` 
+
+```
 PUT /api/availability-slots/{id}
 ```
-_Requiere autenticación como entrenador_
-**Parámetros de solicitud:**
-- : ID del deporte (opcional) `sport_id`
-- `weekday`: Día de la semana (0-6, donde 0 es domingo) (opcional)
-- : Hora de inicio en formato HH:MM (opcional) `start_time`
-- : Hora de fin en formato HH:MM (opcional, debe ser posterior a start_time) `end_time`
-- : Booleano que indica si la sesión es online (opcional) `is_online`
-- `location`: Ubicación de la sesión (opcional)
-- `capacity`: Capacidad máxima (opcional, mínimo 1)
 
-**Respuesta:**
-``` json
-{
-  "message": "Franja de disponibilidad actualizada correctamente",
-  "availabilitySlot": {
-    "id": 1,
-    "coach_id": 1,
-    "sport_id": 1,
-    "weekday": 1,
-    "start_time": "10:00",
-    "end_time": "11:00",
-    "is_online": false,
-    "location": "Gimnasio Central",
-    "capacity": 1,
-    "created_at": "2023-01-01T00:00:00.000000Z",
-    "updated_at": "2023-01-01T00:00:00.000000Z"
-  }
-}
-```
+*Requiere autenticación*
+
+**Parámetros opcionales:** mismos que en creación.
+
 ### Eliminar franja de disponibilidad
-``` 
+
+```
 DELETE /api/availability-slots/{id}
 ```
-_Requiere autenticación como entrenador_
-**Respuesta:**
-``` json
-{
-  "message": "Franja de disponibilidad eliminada correctamente"
-}
+
+*Requiere autenticación*
+
+### Ver franjas de disponibilidad públicas
+
 ```
-### Listar franjas de disponibilidad de un entrenador específico (endpoint público)
-``` 
 GET /api/coaches/{coachId}/availability-slots
 ```
-**Respuesta:**
-``` json
-[
-  {
-    "id": 1,
-    "coach_id": 1,
-    "sport_id": 1,
-    "weekday": 1,
-    "start_time": "10:00",
-    "end_time": "11:00",
-    "is_online": false,
-    "location": "Gimnasio Central",
-    "capacity": 1,
-    "created_at": "2023-01-01T00:00:00.000000Z",
-    "updated_at": "2023-01-01T00:00:00.000000Z",
-    "sport": {
-      "id": 1,
-      "name": "Yoga",
-      "created_at": "2023-01-01T00:00:00.000000Z",
-      "updated_at": "2023-01-01T00:00:00.000000Z"
-    }
-  }
-]
+
+---
+
+## 📆 Reservas
+
+### Listar entrenadores disponibles
+
 ```
-## Gestión de Reservas (Booking)
-### Listar entrenadores disponibles (endpoint público)
-``` 
 GET /api/available-coaches
 ```
-**Respuesta:**
-``` json
-[
-  {
-    "id": 1,
-    "user_id": 1,
-    "bio": "Entrenador profesional con 10 años de experiencia",
-    "created_at": "2023-01-01T00:00:00.000000Z",
-    "updated_at": "2023-01-01T00:00:00.000000Z",
-    "user": {
-      "id": 1,
-      "name": "Juan Pérez",
-      "email": "juan@example.com"
-    },
-    "sports": [
-      {
-        "id": 1,
-        "name": "Yoga",
-        "created_at": "2023-01-01T00:00:00.000000Z",
-        "updated_at": "2023-01-01T00:00:00.000000Z"
-      }
-    ]
-  }
-]
-```
+
+*Endpoint público*
+
 ### Listar reservas del usuario
-``` 
+
+```
 GET /api/bookings
 ```
-_Requiere autenticación_
-**Respuesta:**
-``` json
-[
-  {
-    "id": 1,
-    "student_id": 2,
-    "coach_id": 1,
-    "availability_slot_id": 1,
-    "type": "Individual",
-    "session_at": "2023-12-04T10:00:00.000000Z",
-    "session_duration_minutes": 60,
-    "status": "Pendiente",
-    "total_amount": "30.00",
-    "currency": "EUR",
-    "payment_status": "Pendiente",
-    "created_at": "2023-01-01T00:00:00.000000Z",
-    "updated_at": "2023-01-01T00:00:00.000000Z",
-    "coach": {
-      "id": 1,
-      "user_id": 1,
-      "user": {
-        "id": 1,
-        "name": "Juan Pérez"
-      }
-    },
-    "student": {
-      "id": 2,
-      "name": "María López"
-    },
-    "availabilitySlot": {
-      "id": 1,
-      "coach_id": 1,
-      "sport_id": 1,
-      "weekday": 1,
-      "start_time": "10:00",
-      "end_time": "11:00"
-    }
-  }
-]
-```
+
+*Requiere autenticación*
+
 ### Crear una reserva
-``` 
+
+```
 POST /api/bookings
 ```
-_Requiere autenticación_
-**Parámetros de solicitud:**
-- : ID del entrenador (requerido) `coach_id`
-- : ID del deporte (requerido) `sport_id`
-- : Fecha y hora de la sesión en formato ISO 8601 (requerido, debe ser posterior a la fecha actual) `session_at`
-- : ID de la franja de disponibilidad (requerido) `availability_slot_id`
 
-**Respuesta:**
-``` json
-{
-  "message": "Reserva creada correctamente",
-  "booking": {
-    "id": 1,
-    "student_id": 2,
-    "coach_id": 1,
-    "availability_slot_id": 1,
-    "type": "Individual",
-    "session_at": "2023-12-04T10:00:00.000000Z",
-    "session_duration_minutes": 60,
-    "status": "Pendiente",
-    "total_amount": "30.00",
-    "currency": "EUR",
-    "payment_status": "Pendiente",
-    "created_at": "2023-01-01T00:00:00.000000Z",
-    "updated_at": "2023-01-01T00:00:00.000000Z"
-  }
-}
+**Parámetros:**
+
+* `coach_id`: ID del entrenador (requerido)
+* `sport_id`: ID del deporte (requerido)
+* `availability_slot_id`: ID de la franja (requerido)
+* `session_at`: Fecha y hora ISO 8601 (requerido)
+* `type`: "Individual" o "Group" (opcional)
+
+### Obtener reserva
+
 ```
-### Obtener detalles de una reserva
-``` 
 GET /api/bookings/{id}
 ```
-_Requiere autenticación_
-**Respuesta:**
-``` json
-{
-  "id": 1,
-  "student_id": 2,
-  "coach_id": 1,
-  "availability_slot_id": 1,
-  "type": "Individual",
-  "session_at": "2023-12-04T10:00:00.000000Z",
-  "session_duration_minutes": 60,
-  "status": "Pendiente",
-  "total_amount": "30.00",
-  "currency": "EUR",
-  "payment_status": "Pendiente",
-  "created_at": "2023-01-01T00:00:00.000000Z",
-  "updated_at": "2023-01-01T00:00:00.000000Z",
-  "coach": {
-    "id": 1,
-    "user_id": 1,
-    "user": {
-      "id": 1,
-      "name": "Juan Pérez"
-    }
-  },
-  "student": {
-    "id": 2,
-    "name": "María López"
-  },
-  "availabilitySlot": {
-    "id": 1,
-    "coach_id": 1,
-    "sport_id": 1,
-    "weekday": 1,
-    "start_time": "10:00",
-    "end_time": "11:00"
-  }
-}
+
+*Requiere autenticación*
+
+### Cancelar reserva
+
 ```
-### Cancelar una reserva
-``` 
 PATCH /api/bookings/{id}/cancel
 ```
-_Requiere autenticación_
-**Parámetros de solicitud:**
-- : Motivo de cancelación (requerido) `cancelled_reason`
 
-**Respuesta:**
-``` json
-{
-  "message": "Reserva cancelada correctamente",
-  "booking": {
-    "id": 1,
-    "student_id": 2,
-    "coach_id": 1,
-    "availability_slot_id": 1,
-    "type": "Individual",
-    "session_at": "2023-12-04T10:00:00.000000Z",
-    "session_duration_minutes": 60,
-    "status": "Cancelada",
-    "total_amount": "30.00",
-    "currency": "EUR",
-    "payment_status": "Pendiente",
-    "cancelled_at": "2023-01-02T00:00:00.000000Z",
-    "cancelled_reason": "No podré asistir",
-    "created_at": "2023-01-01T00:00:00.000000Z",
-    "updated_at": "2023-01-02T00:00:00.000000Z"
-  }
-}
+**Parámetros:**
+
+* `cancelled_reason`: Motivo de la cancelación (requerido)
+
+### Marcar como pagada
+
 ```
-### Marcar una reserva como pagada (solo entrenadores)
-``` 
 PATCH /api/bookings/{id}/mark-as-paid
 ```
-_Requiere autenticación como entrenador_
-**Respuesta:**
-``` json
-{
-  "message": "Pago marcado como completado",
-  "booking": {
-    "id": 1,
-    "student_id": 2,
-    "coach_id": 1,
-    "availability_slot_id": 1,
-    "type": "Individual",
-    "session_at": "2023-12-04T10:00:00.000000Z",
-    "session_duration_minutes": 60,
-    "status": "Pendiente",
-    "total_amount": "30.00",
-    "currency": "EUR",
-    "payment_status": "Completado",
-    "created_at": "2023-01-01T00:00:00.000000Z",
-    "updated_at": "2023-01-02T00:00:00.000000Z"
-  }
-}
-```
-## Notas para el desarrollo del PoC
-En esta primera versión del PoC (Prueba de Concepto) se han simplificado varios aspectos:
-1. Todas las reservas son de tipo "Individual" (no hay clases grupales).
-2. No se calcula ninguna comisión de plataforma (platform_fee).
-3. Duración de sesión fija de 60 minutos.
-4. Precio fijo de 30€ por sesión.
-5. No hay filtros complejos en los listados.
 
-API con la funcionalidad básica para gestionar disponibilidad de entrenadores y reservas de sesiones, permitiendo un flujo completo desde la creación de franjas de disponibilidad hasta la confirmación del pago.
+*Requiere autenticación como entrenador*
+
+---
+
+## 🔧 Health Check
+
+```
+GET /api/health
+```
+
+*Verifica el estado de la API.*
+
+---
+
+## 🧪 Notas para PoC
+
+* Todas las reservas son individuales por defecto.
+* Precio fijo de 30€.
+* Duración de sesión fija de 60 min.
+* Sin comisiones ni filtros avanzados.
+
+API enfocada en disponibilidad y reservas para entrenadores personales.
