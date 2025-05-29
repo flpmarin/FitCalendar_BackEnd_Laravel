@@ -38,5 +38,8 @@ php artisan view:cache
 echo "📦 Ejecutando migraciones…"
 php artisan migrate --force || echo "⚠️  Migraciones fallaron, pero continuo."
 
+echo "🌱 Ejecutando seeders…"
+php artisan db:seed --force || echo "⚠️  Seeder falló, pero continuo."
+
 echo "🟢 Lanzando servidor en :${PORT:-8000}"
 php artisan serve --host=0.0.0.0 --port="${PORT:-8000}"
