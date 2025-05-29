@@ -1,0 +1,56 @@
+# Sistemas de control de versiones
+.git
+.github
+.gitignore
+.gitattributes
+
+# Entornos y configuración
+.env
+.env.*
+.editorconfig
+.blueprint
+.vscode
+.idea
+*.log
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de caché y generados
+/bootstrap/cache/*
+/storage/app/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+/.phpunit.result.cache
+
+# Dependencias que se instalarán durante el build
+/vendor
+/node_modules
+
+# Archivos de prueba
+/tests
+/phpunit.xml
+.phpunit.result.cache
+
+# Documentación y archivos no esenciales para producción
+/README.md
+/CHANGELOG.md
+/LICENSE.md
+/API.md
+*.md
+/docker-compose.yml
+*.postman_collection.json
+*.json.postman_collection
+fitcalendar-collection.json
+
+# Archivos específicos de desarrollo
+Dockerfile.dev
+docker-compose.dev.yml
+draft.yaml
+
+# Otros archivos que no son necesarios en producción
+*.sublime-project
+*.sublime-workspace
