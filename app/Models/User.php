@@ -29,6 +29,8 @@ class User extends Authenticatable
         'profile_picture_url',
         'stripe_customer_id',
         'stripe_account_id',
+        'age',
+        'description',
     ];
 
     /**
@@ -51,6 +53,7 @@ class User extends Authenticatable
         return [
             'id' => 'integer',
             'email_verified_at' => 'timestamp',
+            'age' => 'integer',
         ];
     }
 
