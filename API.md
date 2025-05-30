@@ -28,15 +28,18 @@ POST /api/login
 ```
 POST /api/register
 ```
-
-**Parámetros de solicitud:**
-
-* `name`: Nombre completo (requerido)
-* `email`: Correo electrónico (requerido)
-* `password`: Contraseña (requerido)
-* `password_confirmation`: Confirmación de contraseña (requerido)
-* `role`: "Student" o "Coach" (requerido)
-* `language`: Código de idioma (por ejemplo, "es", "en") (opcional ->por defecto 'es')
+- **Método**: POST
+- **Descripción**: Registrar un nuevo usuario en el sistema
+- **Parámetros**:
+    - `name`: Nombre del usuario (obligatorio)
+    - `email`: Correo electrónico (obligatorio, único)
+    - `password`: Contraseña (obligatorio)
+    - `password_confirmation`: Confirmación de contraseña (obligatorio)
+    - `role`: Rol del usuario (obligatorio, valores: "Student", "Coach", "Admin")
+    - `language`: Idioma preferido (opcional, predeterminado: "es")
+    - `age`: Edad del usuario (opcional)
+    - `description`: Descripción personal (opcional)
+- **Respuesta exitosa**: Token de autenticación y datos del usuario
 
 ### 🚪 Cerrar sesión
 
@@ -48,34 +51,48 @@ POST /api/logout
 
 ---
 
-## 👤 Perfil de Entrenador
 
-### Obtener perfil
+## Perfil de Usuario
 
-```
-GET /api/coach/profile
-```
+### Obtener Perfil de Usuario
+- **URL**: `/api/user/profile`
+- **Método**: GET
+- **Descripción**: Obtener información del perfil del usuario autenticado
+- **Autenticación**: Bearer Token
+- **Respuesta exitosa**: Datos del perfil de usuario incluyendo edad y descripción
 
-*Requiere autenticación como entrenador*
+### Actualizar Perfil de Usuario
+- **URL**: `/api/user/profile`
+- **Método**: PUT
+- **Descripción**: Actualizar datos del perfil de usuario
+- **Autenticación**: Bearer Token
+- **Parámetros**:
+    - `age`: Edad del usuario (opcional, entero entre 10 y 120)
+    - `description`: Descripción personal (opcional, máximo 1000 caracteres)
+- **Respuesta exitosa**: Mensaje de confirmación y datos actualizados
 
-**Respuesta:** JSON con datos del entrenador, organización y deportes asignados.
+## Perfil de Entrenador
 
-### Actualizar perfil
+### Obtener Perfil de Entrenador
+- **URL**: `/api/coach/profile`
+- **Método**: GET
+- **Descripción**: Obtener información del perfil de entrenador
+- **Autenticación**: Bearer Token (debe ser un usuario con rol "Coach")
+- **Respuesta exitosa**: Datos del perfil de entrenador con relaciones
 
-```
-PUT /api/coach/profile
-```
-
-*Requiere autenticación como entrenador*
-
-**Parámetros de solicitud:**
-
-* `description`: Biografía del entrenador (opcional)
-* `city`: Ciudad (opcional)
-* `country`: País (opcional)
-* `coach_type`: Tipo de entrenador (opcional)
-* `organization_id`: ID de organización (opcional)
-* `payment_info`: Información de pago (opcional)
+### Actualizar Perfil de Entrenador
+- **URL**: `/api/coach/profile`
+- **Método**: PUT
+- **Descripción**: Actualizar datos del perfil de entrenador
+- **Autenticación**: Bearer Token (debe ser un usuario con rol "Coach")
+- **Parámetros**:
+    - `description`: Descripción profesional (opcional)
+    - `city`: Ciudad (opcional)
+    - `country`: País (opcional)
+    - `coach_type`: Tipo de entrenador (opcional, "Individual" o "Club")
+    - `organization_id`: ID de la organización (opcional)
+    - `payment_info`: Información de pago (opcional)
+- **Respuesta exitosa**: Mensaje de confirmación y datos actualizados
 
 ### Asignar deportes
 

@@ -194,6 +194,61 @@
             ]
         },
         {
+            "name": "Perfil de Usuario",
+            "item": [
+                {
+                    "name": "Obtener perfil de usuario",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/user/profile",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "user", "profile"]
+                        }
+                    }
+                },
+                {
+                    "name": "Actualizar perfil de usuario",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"age\": 30,\n  \"description\": \"Usuario activo y deportista\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/user/profile",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "user", "profile"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "name": "Disponibilidad",
             "item": [
                 {
@@ -316,46 +371,12 @@
                             "path": ["api", "availability-slots", "1"]
                         }
                     }
-                },
-                {
-                    "name": "Franjas de disponibilidad por entrenador",
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/coaches/1/availability-slots",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "coaches", "1", "availability-slots"]
-                        }
-                    }
                 }
             ]
         },
         {
             "name": "Reservas",
             "item": [
-                {
-                    "name": "Listar entrenadores disponibles",
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/available-coaches",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "available-coaches"]
-                        }
-                    }
-                },
                 {
                     "name": "Listar reservas",
                     "request": {
@@ -397,7 +418,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"coach_id\": 1,\n  \"sport_id\": 1,\n  \"availability_slot_id\": 1,\n  \"session_at\": \"2023-12-04T10:00:00Z\"\n}"
+                            "raw": "{\n  \"availability_slot_id\": 1,\n  \"date\": \"2025-06-01\",\n  \"notes\": \"Clase de prueba\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/api/bookings",
@@ -433,10 +454,6 @@
                         "method": "PATCH",
                         "header": [
                             {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
                                 "key": "Accept",
                                 "value": "application/json"
                             },
@@ -445,10 +462,6 @@
                                 "value": "Bearer {{token}}"
                             }
                         ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"cancelled_reason\": \"No podré asistir\"\n}"
-                        },
                         "url": {
                             "raw": "{{base_url}}/api/bookings/1/cancel",
                             "host": ["{{base_url}}"],
@@ -457,7 +470,7 @@
                     }
                 },
                 {
-                    "name": "Marcar como pagada",
+                    "name": "Marcar reserva como pagada",
                     "request": {
                         "method": "PATCH",
                         "header": [
@@ -478,16 +491,45 @@
                     }
                 }
             ]
-        }
-    ],
-    "variable": [
-        {
-            "key": "base_url",
-            "value": "http://localhost"
         },
         {
-            "key": "token",
-            "value": "tu_token_aqui"
+            "name": "Coaches públicos",
+            "item": [
+                {
+                    "name": "Listar coaches disponibles",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/available-coaches",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "available-coaches"]
+                        }
+                    }
+                },
+                {
+                    "name": "Listar disponibilidad de un coach",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/coaches/1/availability-slots",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "coaches", "1", "availability-slots"]
+                        }
+                    }
+                }
+            ]
         }
     ]
 }
