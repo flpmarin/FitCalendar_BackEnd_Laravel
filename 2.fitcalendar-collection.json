@@ -109,6 +109,69 @@
                 }
             ]
         },
+
+        {
+            "name": "Perfil de Usuario",
+            "item": [
+                {
+                    "name": "Obtener perfil de usuario",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/user/profile",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "user", "profile"]
+                        },
+                        "description": "Obtiene la información del perfil del usuario autenticado, incluyendo edad y descripción"
+                    }
+                },
+                {
+                    "name": "Actualizar perfil de usuario",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"age\": 28,\n  \"description\": \"Apasionado por el fitness y la vida saludable\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/user/profile",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "user", "profile"]
+                        },
+                        "description": "Actualiza la edad y descripción del perfil de usuario"
+                    }
+                }
+            ]
+        },
         {
             "name": "Perfil de Entrenador",
             "item": [

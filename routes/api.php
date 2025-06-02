@@ -13,6 +13,7 @@ use App\Http\Controllers\API\CoachController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\UserProfileController;
 
 // Health check endpoint para Railway
 // Route::get('/health', fn () => response()->json(['status' => 'ok']));
@@ -61,6 +62,9 @@ Route::get('/available-coaches', [BookingController::class, 'getAvailableCoaches
 
 // Rutas protegidas que requieren autenticación
 Route::middleware('auth:sanctum')->group(function () {
+    // Perfil de Usuario
+    Route::get('/user/profile', [UserProfileController::class, 'getProfile']);
+    Route::put('/user/profile', [UserProfileController::class, 'updateProfile']);
     // Perfil Coach
     Route::get('/coach/profile', [CoachController::class, 'getProfile']);
     Route::put('/coach/profile', [CoachController::class, 'updateProfile']);
