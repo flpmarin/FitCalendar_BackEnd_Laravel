@@ -1,6 +1,6 @@
 # FitCalendar - Guía de Instalación.--
 ## Requisitos Previos
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y funcionando.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y funcionando.sa
 - [Git](https://git-scm.com/downloads) instalado
 
 ## Instrucciones de Instalación (Válido para Windows, macOS y Linux)
