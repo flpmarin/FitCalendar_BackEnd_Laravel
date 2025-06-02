@@ -9,8 +9,10 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Filament\Models\Contracts\FilamentUser;
 
-class User extends Authenticatable
+
+class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
@@ -71,5 +73,9 @@ class User extends Authenticatable
     public function coach(): HasOne
     {
         return $this->hasOne(Coach::class);
+    }
+    public function canAccessPanel(\Filament\Panel $panel): bool
+    {
+        return $this->role === 'Admin';
     }
 }
