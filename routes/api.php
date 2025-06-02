@@ -10,6 +10,7 @@ use App\Http\Controllers\API\BookingPaymentController;
 use App\Http\Controllers\API\BookingController;
 use App\Http\Controllers\API\AvailabilitySlotController;
 use App\Http\Controllers\API\CoachController;
+use App\Http\Controllers\CoachSessionController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -80,4 +81,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Ruta para marcar una reserva como pagada (ya existente)
     Route::patch('bookings/{id}/mark-as-paid', [BookingPaymentController::class, 'markAsPaid']);
+    Route::post('/coach-sessions', [CoachSessionController::class, 'store']);
 });
