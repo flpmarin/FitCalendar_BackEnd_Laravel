@@ -111,6 +111,19 @@ return [
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
+        'pgsql-railway' => [
+            'driver' => 'pgsql',
+            'host' => env('RAILWAY_DB_HOST'),
+            'port' => env('RAILWAY_DB_PORT', '5432'),
+            'database' => env('RAILWAY_DB_DATABASE'),
+            'username' => env('RAILWAY_DB_USERNAME'),
+            'password' => env('RAILWAY_DB_PASSWORD'),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'schema' => 'public',
+            'sslmode' => 'require',
+        ],
+
 
     ],
 

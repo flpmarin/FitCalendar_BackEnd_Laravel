@@ -14,8 +14,6 @@ class DatabaseSeeder extends Seeder
             SportSeeder::class,
             CoachSeeder::class,
             CoachSportSeeder::class,
-            AvailabilitySlotSeeder::class,
-            TrainingClassSeeder::class,
         ]);
     }
 }

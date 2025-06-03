@@ -6,33 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('specific_availabilities', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('coach_id')->constrained();
-            $table->foreignId('sport_id')->nullable()->constrained();
-            $table->timestampTz('start_at');
-            $table->timestampTz('end_at');
-            $table->enum('availability_type', ['Available', 'Blocked'])->default('Available');
-            $table->unsignedSmallInteger('capacity')->nullable();
-            $table->boolean('is_online')->nullable();
+            $table->foreignId('coach_id')->constrained()->onDelete('cascade');
+            $table->foreignId('sport_id')->constrained();
+            $table->date('date');
+            $table->time('start_time');
+            $table->time('end_time');
+            $table->unsignedSmallInteger('capacity')->nullable()->default(1);
+            $table->boolean('is_online')->default(false);
             $table->string('location')->nullable();
-            $table->string('reason')->nullable();
-            $table->timestamps();
-        });
+            $table->boolean('is_booked')->default(false);
 
-        Schema::enableForeignKeyConstraints();
+            $table->timestamps();
+
+            $table->unique(['coach_id', 'sport_id', 'date', 'start_time', 'end_time']);
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('specific_availabilities');

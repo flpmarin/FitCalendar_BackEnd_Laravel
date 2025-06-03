@@ -1,9 +1,14 @@
 {
     "info": {
-        "name": "FitCalendar API - Railway",
+        "name": "FitCalendar API - Railway (v2)",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
+    "variable": [
+        { "key": "base_url", "value": "https://fitcalendarbackendlaravel-production.up.railway.app" },
+        { "key": "token",    "value": "tu_token_aqui" }
+    ],
     "item": [
+        // ---------------- AUTENTICACIÓN ----------------
         {
             "name": "Autenticación",
             "item": [
@@ -12,24 +17,11 @@
                     "request": {
                         "method": "POST",
                         "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            }
+                            { "key": "Content-Type", "value": "application/json" },
+                            { "key": "Accept",       "value": "application/json" }
                         ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"email\": \"usuario@example.com\",\n  \"password\": \"password\"\n}"
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/api/login",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "login"]
-                        }
+                        "body": { "mode": "raw", "raw": "{\n  \"email\": \"usuario@example.com\",\n  \"password\": \"password\"\n}" },
+                        "url": { "raw": "{{base_url}}/api/login", "host": ["{{base_url}}"], "path": ["api","login"] }
                     }
                 },
                 {
@@ -37,24 +29,11 @@
                     "request": {
                         "method": "POST",
                         "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            }
+                            { "key": "Content-Type", "value": "application/json" },
+                            { "key": "Accept",       "value": "application/json" }
                         ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"name\": \"Usuario Nuevo\",\n  \"email\": \"nuevo@example.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\",\n  \"role\": \"Student\",\n  \"language\": \"es\"\n}"
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/api/register",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "register"]
-                        }
+                        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Usuario Nuevo\",\n  \"email\": \"nuevo@example.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\",\n  \"role\": \"Student\",\n  \"language\": \"es\"\n}" },
+                        "url": { "raw": "{{base_url}}/api/register", "host": ["{{base_url}}"], "path": ["api","register"] }
                     }
                 },
                 {
@@ -62,24 +41,11 @@
                     "request": {
                         "method": "POST",
                         "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            }
+                            { "key": "Content-Type", "value": "application/json" },
+                            { "key": "Accept",       "value": "application/json" }
                         ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"name\": \"Entrenador Nuevo\",\n  \"email\": \"coach@example.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\",\n  \"role\": \"Coach\",\n  \"language\": \"es\"\n}"
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/api/register",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "register"]
-                        }
+                        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Entrenador Nuevo\",\n  \"email\": \"coach@example.com\",\n  \"password\": \"password\",\n  \"password_confirmation\": \"password\",\n  \"role\": \"Coach\",\n  \"language\": \"es\"\n}" },
+                        "url": { "raw": "{{base_url}}/api/register", "host": ["{{base_url}}"], "path": ["api","register"] }
                     }
                 },
                 {
@@ -87,29 +53,17 @@
                     "request": {
                         "method": "POST",
                         "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
+                            { "key": "Content-Type", "value": "application/json" },
+                            { "key": "Accept",       "value": "application/json" },
+                            { "key": "Authorization","value": "Bearer {{token}}" }
                         ],
-                        "url": {
-                            "raw": "{{base_url}}/api/logout",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "logout"]
-                        }
+                        "url": { "raw": "{{base_url}}/api/logout", "host": ["{{base_url}}"], "path": ["api","logout"] }
                     }
                 }
             ]
         },
 
+        // ---------------- PERFIL USUARIO ----------------
         {
             "name": "Perfil de Usuario",
             "item": [
@@ -118,23 +72,10 @@
                     "request": {
                         "method": "GET",
                         "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}",
-                                "type": "text"
-                            }
+                            { "key": "Accept",        "value": "application/json" },
+                            { "key": "Authorization", "value": "Bearer {{token}}" }
                         ],
-                        "url": {
-                            "raw": "{{base_url}}/api/user/profile",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "user", "profile"]
-                        },
-                        "description": "Obtiene la información del perfil del usuario autenticado, incluyendo edad y descripción"
+                        "url": { "raw": "{{base_url}}/api/user/profile", "host": ["{{base_url}}"], "path": ["api","user","profile"] }
                     }
                 },
                 {
@@ -142,36 +83,18 @@
                     "request": {
                         "method": "PUT",
                         "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}",
-                                "type": "text"
-                            }
+                            { "key": "Content-Type", "value": "application/json" },
+                            { "key": "Accept",       "value": "application/json" },
+                            { "key": "Authorization","value": "Bearer {{token}}" }
                         ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"age\": 28,\n  \"description\": \"Apasionado por el fitness y la vida saludable\"\n}"
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/api/user/profile",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "user", "profile"]
-                        },
-                        "description": "Actualiza la edad y descripción del perfil de usuario"
+                        "body": { "mode": "raw", "raw": "{\n  \"age\": 28,\n  \"description\": \"Apasionado por el fitness\"\n}" },
+                        "url": { "raw": "{{base_url}}/api/user/profile", "host": ["{{base_url}}"], "path": ["api","user","profile"] }
                     }
                 }
             ]
         },
+
+        // ---------------- PERFIL COACH ----------------
         {
             "name": "Perfil de Entrenador",
             "item": [
@@ -180,20 +103,10 @@
                     "request": {
                         "method": "GET",
                         "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
+                            { "key": "Accept",        "value": "application/json" },
+                            { "key": "Authorization", "value": "Bearer {{token}}" }
                         ],
-                        "url": {
-                            "raw": "{{base_url}}/api/coach/profile",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "coach", "profile"]
-                        }
+                        "url": { "raw": "{{base_url}}/api/coach/profile", "host": ["{{base_url}}"], "path": ["api","coach","profile"] }
                     }
                 },
                 {
@@ -201,28 +114,12 @@
                     "request": {
                         "method": "PUT",
                         "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
+                            { "key": "Content-Type", "value": "application/json" },
+                            { "key": "Accept",       "value": "application/json" },
+                            { "key": "Authorization","value": "Bearer {{token}}" }
                         ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"description\": \"Entrenador profesional con 15 años de experiencia\",\n  \"city\": \"Madrid\",\n  \"country\": \"España\",\n  \"coach_type\": \"Personal Trainer\",\n  \"payment_info\": \"IBAN ES1234567890123456789012\"\n}"
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/api/coach/profile",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "coach", "profile"]
-                        }
+                        "body": { "mode": "raw", "raw": "{\n  \"description\": \"Entrenador con 15 años\",\n  \"city\": \"Madrid\",\n  \"country\": \"España\"\n}" },
+                        "url": { "raw": "{{base_url}}/api/coach/profile", "host": ["{{base_url}}"], "path": ["api","coach","profile"] }
                     }
                 },
                 {
@@ -230,175 +127,74 @@
                     "request": {
                         "method": "POST",
                         "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
+                            { "key": "Content-Type", "value": "application/json" },
+                            { "key": "Accept",       "value": "application/json" },
+                            { "key": "Authorization","value": "Bearer {{token}}" }
                         ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"sports\": [\n    {\n      \"id\": 1,\n      \"specific_price\": 35.00,\n      \"specific_location\": \"Centro Deportivo\",\n      \"session_duration_minutes\": 60\n    },\n    {\n      \"id\": 2,\n      \"specific_price\": 40.00,\n      \"specific_location\": \"Parque Central\",\n      \"session_duration_minutes\": 45\n    }\n  ]\n}"
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/api/coach/sports",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "coach", "sports"]
-                        }
+                        "body": { "mode": "raw", "raw": "{\n  \"sports\": [\n    { \"id\": 1, \"specific_price\": 35 }\n  ]\n}" },
+                        "url": { "raw": "{{base_url}}/api/coach/sports", "host": ["{{base_url}}"], "path": ["api","coach","sports"] }
                     }
                 }
             ]
         },
+
+        // ---------------- DISPONIBILIDAD RECURRENTE ----------------
         {
-            "name": "Disponibilidad",
+            "name": "Disponibilidad recurrente",
             "item": [
                 {
-                    "name": "Listar franjas de disponibilidad",
+                    "name": "Listar franjas",
                     "request": {
                         "method": "GET",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/availability-slots",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "availability-slots"]
-                        }
+                        "header": [ { "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                        "url": { "raw": "{{base_url}}/api/availability-slots", "host": ["{{base_url}}"], "path": ["api","availability-slots"] }
                     }
                 },
                 {
-                    "name": "Crear franja de disponibilidad",
+                    "name": "Crear franja",
                     "request": {
                         "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"sport_id\": 1,\n  \"weekday\": 1,\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"is_online\": false,\n  \"location\": \"Gimnasio Central\"\n}"
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/api/availability-slots",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "availability-slots"]
-                        }
-                    }
-                },
-                {
-                    "name": "Ver franja de disponibilidad",
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/availability-slots/1",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "availability-slots", "1"]
-                        }
-                    }
-                },
-                {
-                    "name": "Actualizar franja de disponibilidad",
-                    "request": {
-                        "method": "PUT",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"sport_id\": 1,\n  \"weekday\": 1,\n  \"start_time\": \"10:30\",\n  \"end_time\": \"11:30\",\n  \"is_online\": true\n}"
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/api/availability-slots/1",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "availability-slots", "1"]
-                        }
-                    }
-                },
-                {
-                    "name": "Eliminar franja de disponibilidad",
-                    "request": {
-                        "method": "DELETE",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/availability-slots/1",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "availability-slots", "1"]
-                        }
-                    }
-                },
-                {
-                    "name": "Franjas de disponibilidad por entrenador",
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/coaches/1/availability-slots",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "coaches", "1", "availability-slots"]
-                        }
+                        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                        "body": { "mode": "raw", "raw": "{\n  \"sport_id\": 1,\n  \"weekday\": 1,\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"is_online\": false\n}" },
+                        "url": { "raw": "{{base_url}}/api/availability-slots", "host": ["{{base_url}}"], "path": ["api","availability-slots"] }
                     }
                 }
             ]
         },
+
+        // ---------------- DISPONIBILIDAD PUNTUAL ----------------
+        {
+            "name": "Disponibilidad puntual",
+            "item": [
+                {
+                    "name": "Listar slots puntuales",
+                    "request": {
+                        "method": "GET",
+                        "header": [ { "key": "Accept", "value": "application/json" } ],
+                        "url": { "raw": "{{base_url}}/api/specific-availabilities", "host": ["{{base_url}}"], "path": ["api","specific-availabilities"] }
+                    }
+                },
+                {
+                    "name": "Crear slot puntual",
+                    "request": {
+                        "method": "POST",
+                        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                        "body": { "mode": "raw", "raw": "{\n  \"sport_id\": 1,\n  \"date\": \"2025-07-01\",\n  \"start_time\": \"10:00\",\n  \"end_time\": \"11:00\",\n  \"is_online\": false,\n  \"location\": \"Gimnasio\",\n  \"capacity\": 4\n}" },
+                        "url": { "raw": "{{base_url}}/api/specific-availabilities", "host": ["{{base_url}}"], "path": ["api","specific-availabilities"] }
+                    }
+                },
+                {
+                    "name": "Bloquear slot puntual",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [ { "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                        "url": { "raw": "{{base_url}}/api/specific-availabilities/1/book", "host": ["{{base_url}}"], "path": ["api","specific-availabilities","1","book"] }
+                    }
+                }
+            ]
+        },
+
+        // ---------------- RESERVAS ----------------
         {
             "name": "Reservas",
             "item": [
@@ -406,163 +202,46 @@
                     "name": "Listar entrenadores disponibles",
                     "request": {
                         "method": "GET",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/available-coaches",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "available-coaches"]
-                        }
+                        "header": [ { "key": "Accept", "value": "application/json" } ],
+                        "url": { "raw": "{{base_url}}/api/available-coaches", "host": ["{{base_url}}"], "path": ["api","available-coaches"] }
                     }
                 },
                 {
                     "name": "Listar reservas",
                     "request": {
                         "method": "GET",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/bookings",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "bookings"]
-                        }
+                        "header": [ { "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                        "url": { "raw": "{{base_url}}/api/bookings", "host": ["{{base_url}}"], "path": ["api","bookings"] }
                     }
                 },
                 {
-                    "name": "Crear reserva",
+                    "name": "Crear reserva puntual",
                     "request": {
                         "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"coach_id\": 1,\n  \"sport_id\": 1,\n  \"availability_slot_id\": 1,\n  \"session_at\": \"2023-12-04T10:00:00Z\"\n}"
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/api/bookings",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "bookings"]
-                        }
+                        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                        "body": { "mode": "raw", "raw": "{\n  \"coach_id\": 1,\n  \"sport_id\": 1,\n  \"specific_availability_id\": 3,\n  \"session_at\": \"2025-07-01T10:00:00Z\"\n}" },
+                        "url": { "raw": "{{base_url}}/api/bookings", "host": ["{{base_url}}"], "path": ["api","bookings"] }
                     }
                 },
                 {
-                    "name": "Ver reserva",
+                    "name": "Crear reserva recurrente",
                     "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/bookings/1",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "bookings", "1"]
-                        }
+                        "method": "POST",
+                        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                        "body": { "mode": "raw", "raw": "{\n  \"coach_id\": 1,\n  \"sport_id\": 1,\n  \"availability_slot_id\": 1,\n  \"session_at\": \"2025-07-07T10:00:00Z\"\n}" },
+                        "url": { "raw": "{{base_url}}/api/bookings", "host": ["{{base_url}}"], "path": ["api","bookings"] }
                     }
                 },
                 {
                     "name": "Cancelar reserva",
                     "request": {
                         "method": "PATCH",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"cancelled_reason\": \"No podré asistir\"\n}"
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/api/bookings/1/cancel",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "bookings", "1", "cancel"]
-                        }
-                    }
-                },
-                {
-                    "name": "Marcar como pagada",
-                    "request": {
-                        "method": "PATCH",
-                        "header": [
-                            {
-                                "key": "Accept",
-                                "value": "application/json"
-                            },
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/bookings/1/mark-as-paid",
-                            "host": ["{{base_url}}"],
-                            "path": ["api", "bookings", "1", "mark-as-paid"]
-                        }
+                        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+                        "body": { "mode": "raw", "raw": "{\n  \"cancelled_reason\": \"No podré asistir\"\n}" },
+                        "url": { "raw": "{{base_url}}/api/bookings/1/cancel", "host": ["{{base_url}}"], "path": ["api","bookings","1","cancel"] }
                     }
                 }
             ]
-        },
-        {
-            "name": "Health Check",
-            "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                    "raw": "{{base_url}}/api/health",
-                    "host": ["{{base_url}}"],
-                    "path": ["api", "health"]
-                }
-            }
-        }
-    ],
-    "variable": [
-        {
-            "key": "base_url",
-            "value": "https://fitcalendarbackendlaravel-production.up.railway.app"
-        },
-        {
-            "key": "token",
-            "value": "tu_token_aqui"
         }
     ]
 }

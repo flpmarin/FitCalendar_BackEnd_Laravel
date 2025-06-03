@@ -67,4 +67,12 @@ class Coach extends Model
             ->withTimestamps();
     }
 
+    /**
+     * Disponibilidades puntuales (por fecha) de este coach.
+     */
+    public function specificAvailabilities(): HasMany
+    {
+        return $this->hasMany(SpecificAvailability::class);
+    }
+
 }

@@ -10,38 +10,28 @@ class SpecificAvailability extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'coach_id',
         'sport_id',
-        'start_at',
-        'end_at',
-        'availability_type',
-        'capacity',
+        'date',
+        'start_time',
+        'end_time',
         'is_online',
         'location',
-        'reason',
+        'is_booked',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
-            'id' => 'integer',
-            'coach_id' => 'integer',
-            'sport_id' => 'integer',
-            'start_at' => 'timestamp',
-            'end_at' => 'timestamp',
-            'capacity' => 'integer',
-            'is_online' => 'boolean',
+            'id'         => 'integer',
+            'coach_id'   => 'integer',
+            'sport_id'   => 'integer',
+            'date'       => 'date',            // YYYY-MM-DD
+            'start_time' => 'string',    // HH:MM
+            'end_time'   => 'string',
+            'is_online'  => 'boolean',
+            'is_booked'  => 'boolean',
         ];
     }
 

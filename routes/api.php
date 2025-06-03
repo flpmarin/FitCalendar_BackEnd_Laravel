@@ -10,7 +10,7 @@ use App\Http\Controllers\API\BookingPaymentController;
 use App\Http\Controllers\API\BookingController;
 use App\Http\Controllers\API\AvailabilitySlotController;
 use App\Http\Controllers\API\CoachController;
-use App\Http\Controllers\CoachSessionController;
+use App\Http\Controllers\API\SpecificAvailabilityController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +22,10 @@ Route::get('/health', function () {
     return 'ok';
 });
 
+// ---------- Endpoints públicos ----------
+Route::get('/coaches/{coachId}/availability-slots', [AvailabilitySlotController::class, 'getByCoach']);
+Route::get('/specific-availabilities',              [SpecificAvailabilityController::class, 'index']);   // listar slots puntuales libres
+Route::get('/available-coaches',                    [BookingController::class, 'getAvailableCoaches']);
 
 
 Route::post('/register', [RegisteredUserController::class, 'store'])
@@ -71,15 +75,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/coach/profile', [CoachController::class, 'updateProfile']);
     Route::post('/coach/sports', [CoachController::class, 'assignSports']);
 
-
-    // Rutas para disponibilidad recurrente
+    // Disponibilidad recurrente
     Route::apiResource('availability-slots', AvailabilitySlotController::class);
 
-    // Rutas para reservas
-    Route::apiResource('bookings', BookingController::class)->except(['update', 'destroy']);
-    Route::patch('bookings/{id}/cancel', [BookingController::class, 'cancel']);
+    // Disponibilidad puntual
+    Route::post('/specific-availabilities',               [SpecificAvailabilityController::class, 'store']);
+    Route::patch('/specific-availabilities/{id}/book',    [SpecificAvailabilityController::class, 'book']);
 
-    // Ruta para marcar una reserva como pagada (ya existente)
+    // Reservas
+    Route::apiResource('bookings', BookingController::class)->except(['update', 'destroy']);
+    Route::patch('bookings/{id}/cancel',       [BookingController::class, 'cancel']);
     Route::patch('bookings/{id}/mark-as-paid', [BookingPaymentController::class, 'markAsPaid']);
-    Route::post('/coach-sessions', [CoachSessionController::class, 'store']);
 });
