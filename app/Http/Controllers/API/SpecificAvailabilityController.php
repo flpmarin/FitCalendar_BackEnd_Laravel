@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class SpecificAvailabilityController extends Controller
 {
@@ -33,57 +34,73 @@ class SpecificAvailabilityController extends Controller
     // POST /specific-availabilities
     public function store(Request $request): JsonResponse
     {
-        /** @var User|null $user */
-        $user = auth()->user();
-        if (!$user || !$user->coach) {
-            return response()->json(['message' => 'Acceso denegado: solo entrenadores'], 403);
+        try {
+            /** @var User|null $user */
+            $user = auth()->user();
+            if (!$user || !$user->coach) {
+                return response()->json(['message' => 'Acceso denegado: solo entrenadores'], 403);
+            }
+
+            \Log::info('Creando disponibilidad específica', [
+                'user_id' => $user->id,
+                'coach_id' => $user->coach->id,
+                'email' => $user->email,
+            ]);
+
+            $validator = Validator::make($request->all(), [
+                'sport_id'   => 'required|exists:sports,id',
+                'date'       => 'required|date|after_or_equal:today',
+                'start_time' => 'required|date_format:H:i',
+                'end_time'   => 'required|date_format:H:i|after:start_time',
+                'is_online'  => 'required|boolean',
+                'location'   => 'nullable|string|max:255',
+                'capacity'   => 'nullable|integer|min:1',
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['message' => 'Datos inválidos', 'errors' => $validator->errors()], 422);
+            }
+
+            $exists = SpecificAvailability::where('coach_id', $user->coach->id)
+                ->where('sport_id', $request->sport_id)
+                ->where('date', $request->date)
+                ->where('start_time', $request->start_time)
+                ->where('end_time', $request->end_time)
+                ->exists();
+            if ($exists) {
+                return response()->json(['message' => 'Ya existe una disponibilidad idéntica'], 422);
+            }
+
+            $slot = SpecificAvailability::create([
+                'coach_id'   => $user->coach->id,
+                'sport_id'   => $request->sport_id,
+                'date'       => $request->date,
+                'start_time' => $request->start_time,
+                'end_time'   => $request->end_time,
+                'is_online'  => $request->is_online,
+                'location'   => $request->location,
+                'capacity'   => $request->capacity ?? 1,
+                'is_booked'  => false,
+            ]);
+
+            return response()->json([
+                'message' => 'Disponibilidad creada',
+                'specific_availability' => [
+                    'id' => $slot->id,
+                    'date' => $slot->date->toDateString(),
+                    'start_time' => $slot->start_time->format('H:i'),
+                    'end_time' => $slot->end_time->format('H:i'),
+                ],
+            ], 201);
+        } catch (\Throwable $e) {
+            \Log::error('Error creando disponibilidad específica', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json(['message' => 'Error interno del servidor'], 500);
         }
-
-        $validator = Validator::make($request->all(), [
-            'sport_id'   => 'required|exists:sports,id',
-            'date'       => 'required|date|after_or_equal:today',
-            'start_time' => 'required|date_format:H:i',
-            'end_time'   => 'required|date_format:H:i|after:start_time',
-            'is_online'  => 'required|boolean',
-            'location'   => 'nullable|string|max:255',
-            'capacity'   => 'nullable|integer|min:1',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['message' => 'Datos inválidos', 'errors' => $validator->errors()], 422);
-        }
-
-        // evitar duplicados exactos
-        $exists = SpecificAvailability::where('coach_id', $user->coach->id)
-            ->where('sport_id', $request->sport_id)
-            ->where('date', $request->date)
-            ->where('start_time', $request->start_time)
-            ->where('end_time', $request->end_time)
-            ->exists();
-        if ($exists) return response()->json(['message' => 'Ya existe una disponibilidad idéntica'], 422);
-
-        $slot = SpecificAvailability::create([
-            'coach_id'   => $user->coach->id,
-            'sport_id'   => $request->sport_id,
-            'date'       => $request->date,
-            'start_time' => $request->start_time,
-            'end_time'   => $request->end_time,
-            'is_online'  => $request->is_online,
-            'location'   => $request->location,
-            'capacity'   => $request->capacity ?? 1,
-            'is_booked'  => false,
-        ]);
-
-        return response()->json([
-            'message' => 'Disponibilidad creada',
-            'specific_availability' => [
-                'id' => $slot->id,
-                'date' => $slot->date->toDateString(),
-                'start_time' => $slot->start_time->format('H:i'),
-                'end_time' => $slot->end_time->format('H:i'),
-                // añade más campos si quieres
-            ],
-        ], 201);
     }
+
 
     // PATCH /specific-availabilities/{id}/book
     public function book(int $id): JsonResponse
