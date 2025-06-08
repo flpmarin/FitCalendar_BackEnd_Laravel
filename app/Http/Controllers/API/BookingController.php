@@ -10,6 +10,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\Models\CoachSport;
+
 class BookingController extends Controller
 {
     public function index(): JsonResponse
@@ -61,6 +63,13 @@ class BookingController extends Controller
 
         $specific->update(['is_booked' => true]);
 
+        // Buscar precio específico para el coach y deporte
+        $coachSport = CoachSport::where('coach_id', $specific->coach_id)
+            ->where('sport_id', $request->sport_id)
+            ->first();
+
+        $price = $coachSport?->specific_price ?? 35;
+
         $booking = Booking::create([
             'student_id'               => $user->id,
             'coach_id'                 => $specific->coach_id,
@@ -69,6 +78,9 @@ class BookingController extends Controller
             'session_duration_minutes' => 60,
             'status'                   => 'Pending',
             'specific_availability_id' => $specific->id,
+            'total_amount'             => $price,
+            'currency'                 => 'EUR',
+            'platform_fee'            => round($price * 0.1, 2),
         ]);
 
         return response()->json(['message' => 'Reserva creada', 'booking' => $booking->fresh()], 201);
