@@ -79,9 +79,16 @@ class BookingController extends Controller
                 return response()->json(['message' => 'Slot puntual inválido'], 422);
             }
             $session = Carbon::parse($request->session_at);
-            if (!$session->isSameDay($specific->date) || $session->format('H:i') !== $specific->start_time) {
+
+            // Evita errores por diferencias mínimas entre "10:00" y "10:00:00", al usar Carbon::parse
+            if (
+                !$session->isSameDay($specific->date) ||
+                $session->format('H:i:s') !== Carbon::parse($specific->start_time)->format('H:i:s')
+            ) {
                 return response()->json(['message' => 'La fecha/hora no corresponde a la disponibilidad seleccionada'], 422);
             }
+
+
             $specific->is_booked = true;
             $specific->save();
             $bookingData['specific_availability_id'] = $specific->id;
