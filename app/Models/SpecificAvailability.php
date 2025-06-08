@@ -20,6 +20,7 @@ class SpecificAvailability extends Model
         'is_online',
         'location',
         'is_booked',
+        'capacity',
     ];
 
     protected function casts(): array
@@ -31,6 +32,7 @@ class SpecificAvailability extends Model
             'date'       => 'date',            // YYYY-MM-DD
             'is_online'  => 'boolean',
             'is_booked'  => 'boolean',
+            'capacity'   => 'integer',
         ];
     }
 
