@@ -46,12 +46,12 @@ class SpecificAvailability extends Model
     // Accessor para start_time, que convierte el valor de la base de datos a un objeto Carbon
     public function getStartTimeAttribute($value)
     {
-        return Carbon::createFromFormat('H:i', $value);
+        return Carbon::createFromFormat('H:i:s', $value);
     }
 
     // Accessor para end_time, que convierte el valor de la base de datos a un objeto Carbon
     public function getEndTimeAttribute($value)
     {
-        return Carbon::createFromFormat('H:i', $value);
+        return Carbon::createFromFormat('H:i:s', $value);
     }
 }
