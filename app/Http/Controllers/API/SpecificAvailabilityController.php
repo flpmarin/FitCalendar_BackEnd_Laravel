@@ -92,11 +92,12 @@ class SpecificAvailabilityController extends Controller
                 'message' => 'Disponibilidad creada',
                 'specific_availability' => [
                     'id' => $slot->id,
-                    'date' => $slot->date->toDateString(),
-                    'start_time' => $slot->start_time->format('H:i'),
-                    'end_time' => $slot->end_time->format('H:i'),
+                    'date' => optional($slot->date)->toDateString(),
+                    'start_time' => optional($slot->start_time)->format('H:i'),
+                    'end_time' => optional($slot->end_time)->format('H:i'),
                 ],
             ], 201);
+
         } catch (\Throwable $e) {
             Log::error('Error creando disponibilidad específica', [
                 'error' => $e->getMessage(),
