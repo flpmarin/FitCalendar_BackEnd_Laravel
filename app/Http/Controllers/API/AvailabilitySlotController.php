@@ -69,7 +69,16 @@ class AvailabilitySlotController extends Controller
 
         return response()->json([
             'message' => 'Franja de disponibilidad creada correctamente',
-            'availabilitySlot' => $availabilitySlot
+            'availabilitySlot' => [
+                'id' => $availabilitySlot->id,
+                'weekday' => $availabilitySlot->weekday,
+                'start_time' => $availabilitySlot->start_time->format('H:i'),
+                'end_time' => $availabilitySlot->end_time->format('H:i'),
+                'is_online' => $availabilitySlot->is_online,
+                'location' => $availabilitySlot->location,
+                'capacity' => $availabilitySlot->capacity,
+                // puedes incluir relaciones también
+            ]
         ], 201);
     }
 
