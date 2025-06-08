@@ -63,7 +63,7 @@ class BookingController extends Controller
 
         $booking = Booking::create([
             'student_id'               => $user->id,
-            'coach_id'                 => $request->coach_id,
+            'coach_id'                 => $specific->coach_id,
             'type'                     => 'Personal',
             'session_at'               => $request->session_at,
             'session_duration_minutes' => 60,
