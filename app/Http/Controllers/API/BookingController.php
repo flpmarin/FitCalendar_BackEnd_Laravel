@@ -76,13 +76,14 @@ class BookingController extends Controller
             }
             $session = Carbon::parse($request->session_at);
 
-            // Evita errores por diferencias mínimas entre "10:00" y "10:00:00", al usar Carbon::parse
+            // Validar que la fecha y hora de la sesión coincidan con la disponibilidad puntual
             if (
                 !$session->isSameDay($specific->date) ||
-                $session->format('H:i') !== Carbon::parse($specific->start_time)->format('H:i')
+                $session->format('H:i') !== optional($specific->start_time)->format('H:i')
             ) {
                 return response()->json(['message' => 'La fecha/hora no corresponde a la disponibilidad seleccionada'], 422);
             }
+
 
 
             $specific->is_booked = true;
