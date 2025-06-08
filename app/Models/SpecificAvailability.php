@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use carbon\carbon;
 
 class SpecificAvailability extends Model
 {
@@ -28,8 +29,6 @@ class SpecificAvailability extends Model
             'coach_id'   => 'integer',
             'sport_id'   => 'integer',
             'date'       => 'date',            // YYYY-MM-DD
-            'start_time' => 'string',    // HH:MM
-            'end_time'   => 'string',
             'is_online'  => 'boolean',
             'is_booked'  => 'boolean',
         ];
@@ -43,5 +42,16 @@ class SpecificAvailability extends Model
     public function sport(): BelongsTo
     {
         return $this->belongsTo(Sport::class);
+    }
+    // Accessor para start_time, que convierte el valor de la base de datos a un objeto Carbon
+    public function getStartTimeAttribute($value)
+    {
+        return Carbon::createFromFormat('H:i', $value);
+    }
+
+    // Accessor para end_time, que convierte el valor de la base de datos a un objeto Carbon
+    public function getEndTimeAttribute($value)
+    {
+        return Carbon::createFromFormat('H:i', $value);
     }
 }
