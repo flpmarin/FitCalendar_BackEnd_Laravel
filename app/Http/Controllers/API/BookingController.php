@@ -66,10 +66,6 @@ class BookingController extends Controller
             'session_at'               => $request->session_at,
             'session_duration_minutes' => 60,
             'status'                   => 'Pending',
-            'total_amount'             => 30.0,
-            'platform_fee'             => 0,
-            'currency'                 => 'EUR',
-            'payment_status'           => 'Pending',
         ];
 
         // Disponibilidad puntual
