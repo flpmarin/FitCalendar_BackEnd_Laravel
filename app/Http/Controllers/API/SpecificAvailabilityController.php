@@ -79,7 +79,7 @@ class SpecificAvailabilityController extends Controller
             $slot = SpecificAvailability::create([
                 'coach_id'   => $user->coach->id,
                 'sport_id'   => $request->sport_id,
-                'date'       => $request->date,
+                'date' => Carbon::parse($request->date)->startOfDay(), // fuerza a que quede como "local" sin desfase horario
                 'start_time' => $startTime,
                 'end_time'   => $endTime,
                 'is_online'  => $request->is_online,

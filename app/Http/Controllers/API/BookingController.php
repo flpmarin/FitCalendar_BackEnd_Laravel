@@ -77,6 +77,7 @@ class BookingController extends Controller
             $session = Carbon::parse($request->session_at);
 
             // Validar que la fecha y hora de la sesión coincidan con la disponibilidad puntual
+
             if (
                 !$session->copy()->setTimezone(config('app.timezone'))->isSameDay($specific->date) ||
                 $session->copy()->setTimezone(config('app.timezone'))->format('H:i') !== optional($specific->start_time)->format('H:i')
