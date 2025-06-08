@@ -30,6 +30,8 @@ class SpecificAvailability extends Model
             'coach_id'   => 'integer',
             'sport_id'   => 'integer',
             'date'       => 'date', //  formato Y-m-d
+            'start_time' => 'datetime:H:i:s', // Formato de hora
+            'end_time'   => 'datetime:H:i:s', // Formato de hora
             'is_online'  => 'boolean',
             'is_booked'  => 'boolean',
             'capacity'   => 'integer',
@@ -45,32 +47,5 @@ class SpecificAvailability extends Model
     {
         return $this->belongsTo(Sport::class);
     }
-
-    // Accessors para start_time y end_time, que convierten el valor de la base de datos a un objeto Carbon
-    public function getStartTimeAttribute($value)
-    {
-        return $this->parseTime($value)?->format('H:i:s');
-    }
-
-    public function getEndTimeAttribute($value)
-    {
-        return $this->parseTime($value)?->format('H:i:s');
-    }
-
-    private function parseTime($value)
-    {
-        if (!$value) return null;
-
-        try {
-            return Carbon::createFromFormat('H:i:s', $value);
-        } catch (\Exception $e) {
-            try {
-                return Carbon::createFromFormat('H:i', $value);
-            } catch (\Exception $e) {
-                return null;
-            }
-        }
-    }
-
 
 }
