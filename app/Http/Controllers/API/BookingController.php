@@ -79,7 +79,7 @@ class BookingController extends Controller
             // Evita errores por diferencias mínimas entre "10:00" y "10:00:00", al usar Carbon::parse
             if (
                 !$session->isSameDay($specific->date) ||
-                $session->format('H:i:s') !== Carbon::parse($specific->start_time)->format('H:i:s')
+                $session->format('H:i') !== Carbon::parse($specific->start_time)->format('H:i')
             ) {
                 return response()->json(['message' => 'La fecha/hora no corresponde a la disponibilidad seleccionada'], 422);
             }
