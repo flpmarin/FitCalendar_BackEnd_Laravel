@@ -73,7 +73,16 @@ class SpecificAvailabilityController extends Controller
             'is_booked'  => false,
         ]);
 
-        return response()->json(['message' => 'Disponibilidad creada', 'specific_availability' => $slot], 201);
+        return response()->json([
+            'message' => 'Disponibilidad creada',
+            'specific_availability' => [
+                'id' => $slot->id,
+                'date' => $slot->date->toDateString(),
+                'start_time' => $slot->start_time->format('H:i'),
+                'end_time' => $slot->end_time->format('H:i'),
+                // añade más campos si quieres
+            ],
+        ], 201);
     }
 
     // PATCH /specific-availabilities/{id}/book
