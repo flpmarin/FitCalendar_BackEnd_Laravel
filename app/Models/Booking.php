@@ -13,6 +13,7 @@ class Booking extends Model
 
     protected $fillable = [
         'student_id',
+        'coach_id',
         'specific_availability_id',
         'type',
         'session_at',
