@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
-
 class SpecificAvailabilityController extends Controller
 {
     // GET /specific-availabilities
@@ -41,23 +40,29 @@ class SpecificAvailabilityController extends Controller
                 return response()->json(['message' => 'Acceso denegado: solo entrenadores'], 403);
             }
 
-            \Log::info('Creando disponibilidad específica', [
-                'user_id' => $user->id,
-                'coach_id' => $user->coach->id,
-                'email' => $user->email,
-            ]);
-
             $validator = Validator::make($request->all(), [
                 'sport_id'   => 'required|exists:sports,id',
                 'date'       => 'required|date|after_or_equal:today',
-                'start_time' => 'required|date_format:H:i',
-                'end_time'   => 'required|date_format:H:i|after:start_time',
+                'start_time' => 'required|string',
+                'end_time'   => 'required|string',
                 'is_online'  => 'required|boolean',
                 'location'   => 'nullable|string|max:255',
                 'capacity'   => 'nullable|integer|min:1',
             ]);
+
             if ($validator->fails()) {
                 return response()->json(['message' => 'Datos inválidos', 'errors' => $validator->errors()], 422);
+            }
+
+            // Validar formatos de hora válidos
+            try {
+                $startTime = Carbon::parse($request->start_time)->format('H:i:s');
+                $endTime   = Carbon::parse($request->end_time)->format('H:i:s');
+                if ($endTime <= $startTime) {
+                    return response()->json(['message' => 'La hora de fin debe ser posterior a la de inicio'], 422);
+                }
+            } catch (\Exception $e) {
+                return response()->json(['message' => 'Formato de hora inválido'], 422);
             }
 
             $exists = SpecificAvailability::where('coach_id', $user->coach->id)
@@ -66,6 +71,7 @@ class SpecificAvailabilityController extends Controller
                 ->where('start_time', $request->start_time)
                 ->where('end_time', $request->end_time)
                 ->exists();
+
             if ($exists) {
                 return response()->json(['message' => 'Ya existe una disponibilidad idéntica'], 422);
             }
@@ -74,8 +80,8 @@ class SpecificAvailabilityController extends Controller
                 'coach_id'   => $user->coach->id,
                 'sport_id'   => $request->sport_id,
                 'date'       => $request->date,
-                'start_time' => $request->start_time,
-                'end_time'   => $request->end_time,
+                'start_time' => $startTime,
+                'end_time'   => $endTime,
                 'is_online'  => $request->is_online,
                 'location'   => $request->location,
                 'capacity'   => $request->capacity ?? 1,
@@ -92,7 +98,7 @@ class SpecificAvailabilityController extends Controller
                 ],
             ], 201);
         } catch (\Throwable $e) {
-            \Log::error('Error creando disponibilidad específica', [
+            Log::error('Error creando disponibilidad específica', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -101,11 +107,9 @@ class SpecificAvailabilityController extends Controller
         }
     }
 
-
     // PATCH /specific-availabilities/{id}/book
     public function book(int $id): JsonResponse
     {
-        /** @var User|null $user */
         $user = auth()->user();
         if (!$user) return response()->json(['message' => 'No autenticado'], 401);
 
