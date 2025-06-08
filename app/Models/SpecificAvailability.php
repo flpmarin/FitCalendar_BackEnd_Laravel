@@ -45,15 +45,31 @@ class SpecificAvailability extends Model
     {
         return $this->belongsTo(Sport::class);
     }
-    // Accessor para start_time, que convierte el valor de la base de datos a un objeto Carbon
+
+    // Accessors robustos que aceptan H:i o H:i:s
     public function getStartTimeAttribute($value)
     {
-        return $value ? Carbon::createFromFormat('H:i:s', $value) : null;
+        return $this->parseTime($value);
     }
 
-    // Accessor para end_time, que convierte el valor de la base de datos a un objeto Carbon
     public function getEndTimeAttribute($value)
     {
-        return $value ? Carbon::createFromFormat('H:i:s', $value) : null;
+        return $this->parseTime($value);
     }
+
+    private function parseTime($value)
+    {
+        if (!$value) return null;
+
+        try {
+            return Carbon::createFromFormat('H:i:s', $value);
+        } catch (\Exception $e) {
+            try {
+                return Carbon::createFromFormat('H:i', $value);
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+    }
+
 }
