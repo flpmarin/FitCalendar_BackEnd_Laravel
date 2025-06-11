@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Carbon\Carbon;
 
 class SpecificAvailability extends Model
 {
@@ -19,6 +20,7 @@ class SpecificAvailability extends Model
         'is_online',
         'location',
         'is_booked',
+        'capacity',
     ];
 
     protected function casts(): array
@@ -27,11 +29,12 @@ class SpecificAvailability extends Model
             'id'         => 'integer',
             'coach_id'   => 'integer',
             'sport_id'   => 'integer',
-            'date'       => 'date',            // YYYY-MM-DD
-            'start_time' => 'string',    // HH:MM
-            'end_time'   => 'string',
+            'date'       => 'date', //  formato Y-m-d
+            'start_time' => 'datetime:H:i:s', // Formato de hora
+            'end_time'   => 'datetime:H:i:s', // Formato de hora
             'is_online'  => 'boolean',
             'is_booked'  => 'boolean',
+            'capacity'   => 'integer',
         ];
     }
 
@@ -44,4 +47,5 @@ class SpecificAvailability extends Model
     {
         return $this->belongsTo(Sport::class);
     }
+
 }

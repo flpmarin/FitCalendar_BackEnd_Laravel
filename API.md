@@ -1,8 +1,16 @@
-# 📘️ Documentación de la API de FitCalendar
+Tu documentación está bastante bien estructurada y clara. Solo necesita algunas **correcciones y mejoras** para reflejar fielmente el comportamiento actual de tu backend. Aquí va la versión ajustada, incluyendo:
+
+* La lógica real que aplica con `specific_availabilities`, `coach_sports`, y el precio.
+* La omisión temporal de disponibilidad recurrente (que mencionaste haber deshabilitado).
+* Correcciones menores de gramática y estructura.
+
+---
+
+# 📘️ Documentación actualizada de la API de FitCalendar
 
 ## 🛡️ Autenticación
 
-Todos los endpoints protegidos requieren autenticación mediante token Bearer (Sanctum).
+Todos los endpoints protegidos requieren autenticación mediante token Bearer (Laravel Sanctum).
 
 ### 🔐 Login
 
@@ -12,8 +20,12 @@ POST /api/login
 
 **Parámetros:**
 
-* `email`
-* `password`
+```json
+{
+  "email": "usuario@example.com",
+  "password": "password"
+}
+```
 
 **Respuesta:**
 
@@ -23,7 +35,7 @@ POST /api/login
 }
 ```
 
-### 📝 Registro
+###  Registro
 
 ```
 POST /api/register
@@ -36,33 +48,38 @@ POST /api/register
 * `password`
 * `password_confirmation`
 * `role` ("Student", "Coach", "Admin")
-* `language` (**opcional**, por defecto: "es")
-* `age` (**opcional**)
-* `description` (**opcional**)
+* `language` (opcional, por defecto `"es"`)
+* `age` (opcional)
+* `description` (opcional)
 
-**Respuesta:** token + datos del usuario
+**Respuesta:**
 
-### 🚪 Logout
+```json
+{
+  "token": "...",
+  "user":  "..."
+}
+```
+
+###  Logout
 
 ```
 POST /api/logout
 ```
 
-*Requiere token de autenticación*
+> Requiere token de autenticación
 
 ---
 
-## 🗕️ Perfil de Usuario
+##  Perfil de Usuario
 
-### ✏️ Obtener perfil
+### Obtener perfil
 
 ```
 GET /api/user/profile
 ```
 
-*Token Bearer requerido*
-
-### ✏️ Actualizar perfil
+### Actualizar perfil
 
 ```
 PUT /api/user/profile
@@ -75,15 +92,13 @@ PUT /api/user/profile
 
 ---
 
-## 👤 Perfil de Entrenador
+##  Perfil de Entrenador
 
-### Obtener perfil
+### Ver perfil del entrenador autenticado
 
 ```
 GET /api/coach/profile
 ```
-
-*Token de Coach requerido*
 
 ### Actualizar perfil
 
@@ -93,24 +108,27 @@ PUT /api/coach/profile
 
 **Parámetros (todos opcionales):**
 
-* `description`, `city`, `country`, `coach_type`, `organization_id`, `payment_info`
+* `description`
+* `city`
+* `country`
+* `coach_type`
+* `organization_id`
+* `payment_info`
 
-### Asignar deportes
+### Asignar deportes al entrenador
 
 ```
 POST /api/coach/sports
 ```
 
-**Parámetros:**
-
 ```json
 {
   "sports": [
     {
-      "id": 1,                      // requerido
-      "specific_price": 35.00,      // opcional
-      "specific_location": "Centro Deportivo", // opcional
-      "session_duration_minutes": 60 // opcional
+      "id": 1,
+      "specific_price": 35.00,
+      "specific_location": "Centro Deportivo",
+      "session_duration_minutes": 60
     }
   ]
 }
@@ -118,93 +136,55 @@ POST /api/coach/sports
 
 ---
 
-## 🗓️ Disponibilidad
+##  Disponibilidad puntual
 
-### 🗖️ Disponibilidad recurrente
+> Actualmente la disponibilidad recurrente está desactivada.
 
-#### `GET /api/availability-slots`
+### Ver todas las disponibilidades puntuales (propias o públicas)
 
-Lista todas las franjas recurrentes del entrenador autenticado.
+```
+GET /api/specific-availabilities
+```
 
-#### `POST /api/availability-slots`
+### Crear nueva disponibilidad puntual
 
-Crea una nueva franja recurrente.
+```
+POST /api/specific-availabilities
+```
 
 ```json
 {
-  "sport_id": 1,            // requerido
-  "weekday": 1,             // requerido
-  "start_time": "10:00",   // requerido
-  "end_time": "11:00",     // requerido
-  "is_online": false,       // requerido
-  "location": "Gimnasio",  // opcional
-  "capacity": 4             // opcional
+  "sport_id": 1,
+  "date": "2025-07-01",
+  "start_time": "10:00",
+  "end_time": "11:00",
+  "is_online": false,
+  "location": "Gimnasio",
+  "capacity": 4
 }
 ```
-
-#### `GET /api/availability-slots/{id}`
-
-Muestra detalles de una franja.
-
-#### `PUT /api/availability-slots/{id}`
-
-Actualiza una franja recurrente (parámetros iguales al POST).
-
-#### `DELETE /api/availability-slots/{id}`
-
-Elimina una franja recurrente.
-
-#### `GET /api/coaches/{coachId}/availability-slots`
-
-Ver disponibilidad pública de un entrenador.
-
-### 📊 Disponibilidad puntual
-
-#### `GET /api/specific-availabilities`
-
-Lista los slots disponibles (públicos o propios).
-
-#### `POST /api/specific-availabilities`
-
-Crear slot puntual.
-
-```json
-{
-  "sport_id": 1,             // requerido
-  "date": "2025-07-01",      // requerido
-  "start_time": "10:00",     // requerido
-  "end_time": "11:00",       // requerido
-  "is_online": false,         // opcional
-  "location": "Gimnasio",    // opcional
-  "capacity": 4,              // opcional
-  "price": 30.0,              // opcional
-  "duration_minutes": 60      // opcional
-}
-```
-
-#### `PATCH /api/specific-availabilities/{id}/book`
-
-Marcar como reservado.
 
 ---
 
-## 🗕 Reservas
+##  Reservas
 
-### 🔍 Buscar entrenadores
+###  Buscar entrenadores con disponibilidad
 
 ```
 GET /api/available-coaches
 ```
 
-(Público)
+> Devuelve entrenadores que tienen al menos una disponibilidad puntual futura sin reservar.
 
-### 📋 Listar reservas del usuario
+###  Listar reservas del usuario
 
 ```
 GET /api/bookings
 ```
 
-### ➕ Crear reserva puntual
+> Devuelve reservas según si el usuario es `Student` o `Coach`.
+
+### ➕ Crear una nueva reserva
 
 ```
 POST /api/bookings
@@ -214,38 +194,50 @@ POST /api/bookings
 
 ```json
 {
-  "coach_id": 1,                  // requerido
-  "sport_id": 1,                  // requerido
-  "specific_availability_id": 3,  // requerido
-  "session_at": "2025-07-01T10:00:00Z" // requerido
+  "coach_id": 1,
+  "sport_id": 1,
+  "specific_availability_id": 3,
+  "session_at": "2025-07-01T10:00:00Z"
 }
 ```
 
-### 📖 Ver detalle de reserva
+> La fecha y hora (`session_at`) **deben coincidir exactamente** con la disponibilidad puntual seleccionada.
+
+> El precio se calcula desde `coach_sports.specific_price` si existe, o se usa `35 EUR` por defecto.
+
+###  Ver detalle de una reserva
 
 ```
 GET /api/bookings/{id}
 ```
 
-### ❌ Cancelar reserva
+###  Cancelar una reserva
 
 ```
 PATCH /api/bookings/{id}/cancel
 ```
 
-**Parámetro requerido:** `cancelled_reason`
+**Parámetro requerido:**
 
-### ✅ Marcar como pagada
+```json
+{
+  "cancelled_reason": "No podré asistir"
+}
+```
+
+> Solo puede cancelarse si no ha pasado la fecha de la sesión.
+
+###  Marcar como pagada (solo para coaches)
 
 ```
 PATCH /api/bookings/{id}/mark-as-paid
 ```
 
-(Solo Coach)
+> Aún no implementado por defecto, pero si se usa `markAsPaid()`, actualiza `payment_status` a `"Completado"`.
 
 ---
 
-## ⚙️ Health Check
+##  Health Check
 
 ```
 GET /api/health
@@ -255,23 +247,23 @@ GET /api/health
 
 ---
 
-## 🤝 Notas para PoC / Postman
+##  Notas para Postman / entorno de pruebas
 
-* URL base: `https://fitcalendarbackendlaravel-production.up.railway.app`
-* Token: `{{token}}`
-* Todas las llamadas deben incluir headers:
+* Base URL: `https://fitcalendarbackendlaravel-production.up.railway.app`
+* Autenticación: `Authorization: Bearer {{token}}`
+* Headers comunes:
 
-    * `Accept: application/json`
-    * `Authorization: Bearer {{token}}` (cuando aplique)
-
----
-
-## 📂 Otros endpoints planeados (futuro)
-
-* `/api/coach/{id}/reviews` (obtener valoraciones)
-* `/api/payments/...` (procesamiento de pagos)
-* `/api/admin/...` (gestión interna)
+```http
+Accept: application/json
+Authorization: Bearer {{token}}
+```
 
 ---
 
-📄 Esta documentación está alineada con la colección Postman: `FitCalendar API - Railway`
+## 🔮 En desarrollo / pendientes
+
+* `/api/coach/{id}/reviews`
+* `/api/payments/...`
+* `/api/admin/...`
+
+---

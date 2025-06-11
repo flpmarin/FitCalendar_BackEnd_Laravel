@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Carbon\Carbon;
 
 class AvailabilitySlot extends Model
 {
@@ -52,4 +53,17 @@ class AvailabilitySlot extends Model
     {
         return $this->belongsTo(Sport::class);
     }
+
+    // Accessors para start_time y end_time, que convierten el valor de la base de datos a un objeto Carbon
+    public function getStartTimeAttribute($value)
+    {
+        return $value ? Carbon::createFromFormat('H:i:s', $value) : null;
+    }
+
+    // Accessor para end_time, que convierte el valor de la base de datos a un objeto Carbon
+    public function getEndTimeAttribute($value)
+    {
+        return $value ? Carbon::createFromFormat('H:i:s', $value) : null;
+    }
+
 }

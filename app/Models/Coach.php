@@ -56,10 +56,7 @@ class Coach extends Model
     /**
      * Get the training classes for the coach.
      */
-    public function trainingClasses(): HasMany
-    {
-        return $this->hasMany(TrainingClass::class);
-    }
+
     public function sports()
     {
         return $this->belongsToMany(Sport::class, 'coach_sports')
@@ -74,5 +71,11 @@ class Coach extends Model
     {
         return $this->hasMany(SpecificAvailability::class);
     }
+
+    public function availabilitySlots()
+    {
+        return $this->hasMany(AvailabilitySlot::class);
+    }
+
 
 }

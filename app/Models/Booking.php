@@ -13,6 +13,7 @@ class Booking extends Model
 
     protected $fillable = [
         'student_id',
+        'coach_id',
         'specific_availability_id',
         'type',
         'session_at',
@@ -47,6 +48,10 @@ class Booking extends Model
     {
         return $this->belongsTo(SpecificAvailability::class);
     }
+    public function coach(): BelongsTo
+    {
+        return $this->belongsTo(Coach::class);
+    }
 
     /** Métodos de utilidad **/
     public function markAsPaid(): self
@@ -60,9 +65,4 @@ class Booking extends Model
         return $this->payment_status === 'Completado';
     }
 
-    /** Relación indirecta (si querés acceder al coach fácil) **/
-    public function coach()
-    {
-        return $this->specificAvailability->coach();
-    }
 }

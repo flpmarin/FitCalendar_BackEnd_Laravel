@@ -15,6 +15,7 @@ return new class extends Migration
 
             $table->foreignId('specific_availability_id')->constrained()->onDelete('cascade');
             $table->foreignId('student_id')->constrained('users');
+            $table->foreignId('coach_id')->constrained()->onDelete('cascade');
 
             $table->enum('type', ['Personal', 'Group'])->default('Personal');
             $table->timestampTz('session_at')->index();

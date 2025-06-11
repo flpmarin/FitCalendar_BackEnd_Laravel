@@ -1,47 +1,38 @@
 <?php
+
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
-use App\Models\User;
-use App\Models\AvailabilitySlot;
 use App\Models\SpecificAvailability;
 use App\Models\Coach;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\Models\CoachSport;
 
 class BookingController extends Controller
 {
-    /**
-     * Listar todas las reservas del usuario autenticado
-     */
     public function index(): JsonResponse
     {
-        /** @var User|null $user */
         $user = auth()->user();
-        if (!$user) {
-            return response()->json(['message' => 'No autenticado'], 401);
-        }
+        if (!$user) return response()->json(['message' => 'No autenticado'], 401);
 
         $query = Booking::query();
-        $user->coach ? $query->where('coach_id', $user->coach->id)
+        $user->coach
+            ? $query->where('coach_id', $user->coach->id)
             : $query->where('student_id', $user->id);
 
-        $bookings = $query->with(['coach.user', 'student', 'availabilitySlot', 'specificAvailability'])
+        $bookings = $query->with(['coach.user', 'student', 'specificAvailability'])
             ->orderBy('session_at')
             ->get();
 
         return response()->json($bookings);
     }
 
-    /**
-     * Crear una nueva reserva (slot recurrente o puntual)
-     */
     public function store(Request $request): JsonResponse
     {
-        /** @var User|null $user */
         $user = auth()->user();
         if (!$user) return response()->json(['message' => 'No autenticado'], 401);
 
@@ -49,91 +40,76 @@ class BookingController extends Controller
             'coach_id'                 => 'required|exists:coaches,id',
             'sport_id'                 => 'required|exists:sports,id',
             'session_at'               => 'required|date|after:now',
-            'availability_slot_id'     => 'nullable|exists:availability_slots,id',
-            'specific_availability_id' => 'nullable|exists:specific_availabilities,id',
+            'specific_availability_id' => 'required|exists:specific_availabilities,id',
         ]);
         if ($validator->fails()) {
             return response()->json(['message' => 'Datos inválidos', 'errors' => $validator->errors()], 422);
         }
-        if (!$request->availability_slot_id && !$request->specific_availability_id) {
-            return response()->json(['message' => 'Indica availability_slot_id o specific_availability_id'], 422);
+
+        $specific = SpecificAvailability::find($request->specific_availability_id);
+
+        if (!$specific || $specific->is_booked || $specific->coach_id != $request->coach_id) {
+            return response()->json(['message' => 'Slot puntual inválido'], 422);
         }
 
-        $bookingData = [
+        $sessionUtc = Carbon::parse($request->session_at)->setTimezone('UTC');
+        $slotDateTimeUtc = Carbon::parse($specific->date->format('Y-m-d') . ' ' . $specific->start_time->format('H:i:s'), 'UTC');
+
+        if (!$sessionUtc->equalTo($slotDateTimeUtc)) {
+            return response()->json([
+                'message' => 'La fecha/hora no corresponde a la disponibilidad seleccionada'
+            ], 422);
+        }
+
+        $specific->update(['is_booked' => true]);
+
+        // Buscar precio específico para el coach y deporte
+        $coachSport = CoachSport::where('coach_id', $specific->coach_id)
+            ->where('sport_id', $request->sport_id)
+            ->first();
+
+        $price = $coachSport?->specific_price ?? 35;
+
+        $booking = Booking::create([
             'student_id'               => $user->id,
-            'coach_id'                 => $request->coach_id,
+            'coach_id'                 => $specific->coach_id,
             'type'                     => 'Personal',
             'session_at'               => $request->session_at,
             'session_duration_minutes' => 60,
             'status'                   => 'Pending',
-            'total_amount'             => 30.0,
-            'platform_fee'             => 0,
+            'specific_availability_id' => $specific->id,
+            'total_amount'             => $price,
             'currency'                 => 'EUR',
-            'payment_status'           => 'Pending',
-        ];
+            'platform_fee'            => round($price * 0.1, 2),
+        ]);
 
-        // Disponibilidad puntual
-        if ($request->specific_availability_id) {
-            $specific = SpecificAvailability::find($request->specific_availability_id);
-            if (!$specific || $specific->is_booked || $specific->coach_id != $request->coach_id) {
-                return response()->json(['message' => 'Slot puntual inválido'], 422);
-            }
-            $session = Carbon::parse($request->session_at);
-            if (!$session->isSameDay($specific->date) || $session->format('H:i') !== $specific->start_time) {
-                return response()->json(['message' => 'La fecha/hora no corresponde a la disponibilidad seleccionada'], 422);
-            }
-            $specific->is_booked = true;
-            $specific->save();
-            $bookingData['specific_availability_id'] = $specific->id;
-        }
-
-        // Disponibilidad recurrente
-        if ($request->availability_slot_id) {
-            $slot = AvailabilitySlot::find($request->availability_slot_id);
-            if (!$slot || $slot->coach_id != $request->coach_id) {
-                return response()->json(['message' => 'Slot recurrente inválido'], 422);
-            }
-            $sessionDate = Carbon::parse($request->session_at);
-            if ($sessionDate->dayOfWeek !== $slot->weekday) {
-                return response()->json(['message' => 'La fecha no coincide con el día del slot'], 422);
-            }
-            $bookingData['availability_slot_id'] = $slot->id;
-        }
-
-        $booking = Booking::create($bookingData);
         return response()->json(['message' => 'Reserva creada', 'booking' => $booking->fresh()], 201);
     }
 
-    /**
-     * Mostrar una reserva específica
-     */
     public function show(int $id): JsonResponse
     {
-        /** @var User|null $user */
         $user = auth()->user();
         if (!$user) return response()->json(['message' => 'No autenticado'], 401);
 
         $query = Booking::where('id', $id);
-        $user->coach ? $query->where('coach_id', $user->coach->id)
+        $user->coach
+            ? $query->where('coach_id', $user->coach->id)
             : $query->where('student_id', $user->id);
 
-        $booking = $query->with(['coach.user', 'student', 'availabilitySlot', 'specificAvailability'])->first();
+        $booking = $query->with(['coach.user', 'student', 'specificAvailability'])->first();
         if (!$booking) return response()->json(['message' => 'Reserva no encontrada'], 404);
 
         return response()->json($booking);
     }
 
-    /**
-     * Cancelar una reserva
-     */
     public function cancel(Request $request, int $id): JsonResponse
     {
-        /** @var User|null $user */
         $user = auth()->user();
         if (!$user) return response()->json(['message' => 'No autenticado'], 401);
 
         $query = Booking::where('id', $id);
-        $user->coach ? $query->where('coach_id', $user->coach->id)
+        $user->coach
+            ? $query->where('coach_id', $user->coach->id)
             : $query->where('student_id', $user->id);
 
         $booking = $query->first();
@@ -166,17 +142,11 @@ class BookingController extends Controller
         return response()->json(['message' => 'Reserva cancelada', 'booking' => $booking->fresh()]);
     }
 
-    /**
-     * Listar entrenadores con disponibilidad futura
-     */
     public function getAvailableCoaches(): JsonResponse
     {
         $coaches = Coach::with(['user', 'sports'])
-            ->where(function ($q) {
-                $q->whereHas('availabilitySlots')
-                    ->orWhereHas('specificAvailabilities', function ($q2) {
-                        $q2->where('is_booked', false)->where('date', '>=', Carbon::today());
-                    });
+            ->whereHas('specificAvailabilities', function ($q) {
+                $q->where('is_booked', false)->where('date', '>=', Carbon::today());
             })
             ->get();
 
