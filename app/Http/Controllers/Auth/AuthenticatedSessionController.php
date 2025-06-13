@@ -7,6 +7,8 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class AuthenticatedSessionController extends Controller
 {
@@ -39,24 +41,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request)
     {
-        // Para solicitudes de API
-        if ($request->wantsJson() || $request->bearerToken()) {
-            // Autenticación basada en tokens (API)
-            if ($request->user()) {
-                $request->user()->currentAccessToken()->delete();
-            }
+        $user = $request->user();
 
-            return response()->json(['message' => 'Logged out successfully']);
+        if ($user && $user->currentAccessToken()) {
+            $user->currentAccessToken()->delete();
+            Log::info('Token eliminado para: ' . $user->email);
         } else {
-            // Autenticación basada en sesiones (Filament/Web)
-            Auth::guard('web')->logout();
-
-            if ($request->hasSession()) {
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-            }
-
-            return response()->noContent();
+            Log::warning('Logout llamado sin token válido');
         }
+
+        return response()->json(['message' => 'Logged out']);
     }
+
 }
