@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-echo " Cargando variables de entorno de Railway..."
+echo "Cargando variables de entorno de Railway..."
 
-# Asegúrate de que DATABASE_URL esté presente en el entorno
+# Verifica que DATABASE_URL esté definida
 if [ -z "$DATABASE_URL" ]; then
-  echo " Error: DATABASE_URL no está definido."
+  echo "Error: DATABASE_URL no está definido."
   exit 1
 fi
 
@@ -17,7 +17,7 @@ DB_DATABASE=$(php -r "echo ltrim(parse_url(getenv('DATABASE_URL'))['path'], '/')
 DB_USERNAME=$(php -r "echo parse_url(getenv('DATABASE_URL'))['user'];")
 DB_PASSWORD=$(php -r "echo parse_url(getenv('DATABASE_URL'))['pass'];")
 
-echo " Generando archivo .env…"
+echo "Generando archivo .env…"
 cat <<EOF > .env
 APP_ENV=production
 APP_KEY=${APP_KEY}
@@ -33,25 +33,28 @@ DB_USERNAME=${DB_USERNAME}
 DB_PASSWORD=${DB_PASSWORD}
 EOF
 
-echo " Verificando conexión a la base de datos…"
-echo "DB_HOST: $DB_HOST"
-echo "DB_PORT: $DB_PORT"
-echo "DB_DATABASE: $DB_DATABASE"
-echo "DB_USERNAME: $DB_USERNAME"
+echo "Contenido generado del .env:"
+cat .env
 
-echo " Limpiando y cacheando configuración…"
-php artisan optimize:clear   # borra todas las cachés
+echo "Limpiando cachés..."
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear
+
+echo "Cacheando configuración..."
 php artisan config:cache
 php artisan route:cache
 
-echo " Ejecutando migraciones…"
-php artisan migrate --force || echo "  Migraciones fallaron, pero continuo."
+echo "Ejecutando migraciones..."
+php artisan migrate --force || echo "Migraciones fallaron, pero continúo."
 
-echo " Ejecutando seeders…"
-php artisan db:seed --force || echo "  Seeder falló, pero continuo."
+echo "Ejecutando seeders..."
+php artisan db:seed --force || echo "Seeder falló, pero continúo."
 
-echo " Compilando assets de Filament…"
-php artisan filament:assets || echo "  Falló la compilación de Filament, pero continuo."
+echo "Compilando assets de Filament..."
+php artisan filament:assets || echo "Falló la compilación de Filament, pero continúo."
 
-echo " Lanzando servidor en :${PORT:-8000}"
+echo "Lanzando servidor en puerto ${PORT:-8000}"
 php artisan serve --host=0.0.0.0 --port="${PORT:-8000}"
