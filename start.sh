@@ -40,7 +40,7 @@ echo "DB_DATABASE: $DB_DATABASE"
 echo "DB_USERNAME: $DB_USERNAME"
 
 echo " Limpiando y cacheando configuración…"
-php artisan config:clear
+php artisan optimize:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache

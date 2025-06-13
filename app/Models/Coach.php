@@ -54,7 +54,7 @@ class Coach extends Model
     }
 
     /**
-     * Get the training classes for the coach.
+     * Obtiene los deportes asociados a este coach.
      */
 
     public function sports()
