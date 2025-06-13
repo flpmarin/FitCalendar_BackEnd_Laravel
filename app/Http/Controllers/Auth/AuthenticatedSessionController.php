@@ -29,6 +29,8 @@ class AuthenticatedSessionController extends Controller
         }
 
         $user = Auth::user();
+        // Elimina todos los tokens anteriores del usuario
+        $user->tokens()->delete();
 
         return response()->json([
             'token' => $user->createToken('api-token')->plainTextToken,
