@@ -45,9 +45,9 @@ class AuthenticatedSessionController extends Controller
 
         if ($user && $user->currentAccessToken()) {
             $user->currentAccessToken()->delete();
-            \Log::info('Token eliminado para: ' . $user->email);
+            Log::info('Token eliminado para: ' . $user->email);
         } else {
-            \Log::warning('Logout llamado sin token válido');
+            Log::warning('Logout llamado sin token válido');
         }
 
         return response()->json(['message' => 'Logged out']);
