@@ -11,6 +11,9 @@ fi
 
 # Extraer variables desde DATABASE_URL
 DB_CONNECTION=pgsql-railway
+export DB_CONNECTION=pgsql-railway
+export DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD
+
 DB_HOST=$(php -r "echo parse_url(getenv('DATABASE_URL'))['host'];")
 DB_PORT=$(php -r "echo parse_url(getenv('DATABASE_URL'))['port'];")
 DB_DATABASE=$(php -r "echo ltrim(parse_url(getenv('DATABASE_URL'))['path'], '/');")
