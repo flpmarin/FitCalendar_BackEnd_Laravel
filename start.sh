@@ -17,8 +17,11 @@ DB_USERNAME=$(php -r "echo parse_url(getenv('DATABASE_URL'))['user'];")
 DB_PASSWORD=$(php -r "echo parse_url(getenv('DATABASE_URL'))['pass'];")
 DB_CONNECTION=pgsql-railway
 
+# Exportar variables para que Artisan las vea
 export DB_CONNECTION DB_HOST DB_PORT DB_DATABASE DB_USERNAME DB_PASSWORD
 
+# Evitar que optimize:clear use la cache de base de datos
+export CACHE_STORE=file
 
 echo " Generando archivo .env…"
 cat <<EOF > .env
@@ -34,6 +37,7 @@ DB_PORT=${DB_PORT}
 DB_DATABASE=${DB_DATABASE}
 DB_USERNAME=${DB_USERNAME}
 DB_PASSWORD=${DB_PASSWORD}
+CACHE_STORE=file
 EOF
 
 echo " Verificando conexión a la base de datos…"
