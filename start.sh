@@ -10,7 +10,7 @@ if [ -z "$DATABASE_URL" ]; then
 fi
 
 # Extraer variables desde DATABASE_URL
-DB_CONNECTION=pgsql
+DB_CONNECTION=pgsql-railway
 DB_HOST=$(php -r "echo parse_url(getenv('DATABASE_URL'))['host'];")
 DB_PORT=$(php -r "echo parse_url(getenv('DATABASE_URL'))['port'];")
 DB_DATABASE=$(php -r "echo ltrim(parse_url(getenv('DATABASE_URL'))['path'], '/');")
