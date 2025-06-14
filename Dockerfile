@@ -11,7 +11,12 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+#  RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+# instalar dependencias de prod + Faker
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts \
+    && composer require --no-interaction fakerphp/faker: ^1.24
+
+
 
 COPY . .
 
