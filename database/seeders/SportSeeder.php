@@ -26,7 +26,10 @@ class SportSeeder extends Seeder
         ];
 
         foreach ($sports as $sport) {
-            Sport::create($sport);
+            Sport::updateOrCreate(
+                ['name_es' => $sport['name_es']],   // clave única
+                ['name_en' => $sport['name_en']]    // valores a actualizar
+            );
         }
     }
 }
