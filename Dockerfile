@@ -18,7 +18,7 @@ COPY . .
 RUN php artisan package:discover --ansi
 
 # Puedes dejar este cache si quieres que compile más rápido
-RUN php artisan config:cache && php artisan route:cache
+# RUN php artisan config:cache && php artisan route:cache
 
 RUN chmod -R 775 storage bootstrap/cache
 
