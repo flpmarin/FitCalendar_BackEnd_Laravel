@@ -15,6 +15,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserProfileController;
+use App\Http\Controllers\PaymentSimulatorController;
 
 // Health check endpoint para Railway
 // Route::get('/health', fn () => response()->json(['status' => 'ok']));
@@ -87,3 +88,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('bookings/{id}/cancel',       [BookingController::class, 'cancel']);
     Route::patch('bookings/{id}/mark-as-paid', [BookingPaymentController::class, 'markAsPaid']);
 });
+
+Route::post('/simulator/pay', [PaymentSimulatorController::class, 'pay']);
