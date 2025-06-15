@@ -16,10 +16,12 @@ class CoachSeeder extends Seeder
         $organizations = Organization::all();
 
         foreach ($coachUsers as $user) {
-            Coach::factory()->create([
-                'user_id' => $user->id,
-                'organization_id' => rand(0, 1) ? $organizations->random()->id : null, // 50% probabilidad de pertenecer a una organización
-            ]);
+            Coach::updateOrCreate(
+                ['user_id' => $user->id],                           // evita duplicados
+                ['organization_id' => rand(0, 1)                    // 50 % con organización
+                    ? $organizations->random()->id
+                    : null]
+            );
         }
     }
 }

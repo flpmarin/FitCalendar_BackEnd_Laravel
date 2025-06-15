@@ -11,14 +11,18 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+#  RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+# instalar dependencias de prod + Faker
+RUN composer install --optimize-autoloader --no-interaction --no-scripts
+
+
 
 COPY . .
 
 RUN php artisan package:discover --ansi
 
 # Puedes dejar este cache si quieres que compile más rápido
-RUN php artisan config:cache && php artisan route:cache
+# RUN php artisan config:cache && php artisan route:cache
 
 RUN chmod -R 775 storage bootstrap/cache
 
