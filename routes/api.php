@@ -76,6 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/coach/profile', [CoachController::class, 'getProfile']);
     Route::put('/coach/profile', [CoachController::class, 'updateProfile']);
     Route::post('/coach/sports', [CoachController::class, 'assignSports']);
+    Route::delete('/coach/sports/{sportId}', [CoachController::class, 'removeSport']);
 
     // Disponibilidad recurrente
     Route::apiResource('availability-slots', AvailabilitySlotController::class);

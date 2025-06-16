@@ -116,4 +116,22 @@ class CoachController extends Controller
             'coach' => $user->coach->load('sports')
         ]);
     }
+
+    /**
+     * Eliminar deporte asignado al entrenador
+     */
+    public function removeSport(int $sportId): JsonResponse
+    {
+        $user = auth()->user();
+        if (!$user?->coach) {
+            return response()->json(['message' => 'No se encontró perfil de entrenador'], 404);
+        }
+
+        $user->coach->sports()->detach($sportId);
+
+        return response()->json([
+            'message' => 'Deporte eliminado correctamente',
+            'coach' => $user->coach->load('sports')
+        ]);
+    }
 }
