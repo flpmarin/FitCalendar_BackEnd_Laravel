@@ -127,6 +127,18 @@ class CoachController extends Controller
             return response()->json(['message' => 'No se encontró perfil de entrenador'], 404);
         }
 
+        // Verificar si existen disponibilidades puntuales asociadas a este deporte
+        $hasAvailabilities = $user->coach
+            ->specificAvailabilities()
+            ->where('sport_id', $sportId)
+            ->exists();
+
+        if ($hasAvailabilities) {
+            return response()->json([
+                'message' => 'No puedes quitar este deporte porque tienes disponibilidades puntuales asociadas.'
+            ], 409);
+        }
+
         $user->coach->sports()->detach($sportId);
 
         return response()->json([

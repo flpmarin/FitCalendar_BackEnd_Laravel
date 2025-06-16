@@ -17,8 +17,8 @@ POST /api/login
 
 ```json
 {
-  "email": "usuario@example.com",
-  "password": "password"
+    "email": "usuario@example.com",
+    "password": "password"
 }
 ```
 
@@ -168,7 +168,41 @@ POST /api/coach/sports
 }
 ```
 
----
+
+Sí, debes actualizar la documentación en `API.md` para reflejar que no se puede quitar un deporte si existen disponibilidades puntuales asociadas.  
+Además, elimina el comentario dentro del bloque JSON, ya que no es válido en JSON estándar.
+
+Aquí tienes la sección corregida y ampliada:
+
+### Quitar deporte asignado al entrenador
+
+```
+DELETE /api/coach/sports/{sportId}
+```
+
+> Elimina la relación entre el coach autenticado y el deporte indicado.  
+> **No se permite eliminar el deporte si existen disponibilidades puntuales asociadas a ese deporte.**
+
+**Posibles respuestas:**
+
+- **Éxito:**
+```json
+{
+  "message": "Deporte eliminado correctamente",
+  "coach": {
+    /* datos actualizados del coach, incluyendo la lista de deportes */
+  }
+}
+```
+
+- **Error (disponibilidades asociadas):**
+```json
+{
+  "message": "No puedes quitar este deporte porque tienes disponibilidades puntuales asociadas."
+}
+```
+
+Así la documentación refleja el comportamiento real del endpoint.
 
 ## Disponibilidad puntual
 
@@ -289,7 +323,7 @@ PATCH /api/bookings/{id}/cancel
 
 ```json
 {
-  "cancelled_reason": "No podré asistir"
+    "cancelled_reason": "No podré asistir"
 }
 ```
 
