@@ -1,8 +1,4 @@
-# FitCalendar API Documentation
-```markdown
----
-
-#  Documentación de la API de FitCalendar
+# FitCalendar API Documentación
 
 ## Autenticación
 
@@ -219,7 +215,17 @@ POST /api/specific-availabilities
 }
 ```
 
----
+### Eliminar una disponibilidad puntual
+
+```
+DELETE /api/specific-availabilities/{id}
+```
+
+> Solo el coach creador puede eliminar su propia disponibilidad puntual.
+
+
+Esto documenta el endpoint que ya existe en tus rutas y controlador (`destroy`).
+
 
 ## Reservas
 
@@ -322,11 +328,11 @@ Authorization: Bearer {{token}}
 
 ---
 
-## 🔮 En desarrollo / pendientes
+##  En desarrollo / pendientes
 
 - `/api/coach/{id}/reviews`
 - `/api/payments/...`
 - `/api/admin/...`
 
 ---
-```
+
