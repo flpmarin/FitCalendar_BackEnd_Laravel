@@ -76,6 +76,13 @@ class SpecificAvailabilityController extends Controller
             if ($exists) {
                 return response()->json(['message' => 'Ya existe una disponibilidad idéntica'], 422);
             }
+            // validar que el coach tenga asignado el deporte para el cual se crea la disponibilidad
+            $coachSports = $user->coach->sports()->pluck('id')->toArray();
+            if (!in_array($request->sport_id, $coachSports)) {
+                return response()->json([
+                    'message' => 'No puedes crear disponibilidad para un deporte que no tienes asignado.'
+                ], 403);
+            }
 
             $slot = SpecificAvailability::create([
                 'coach_id'   => $user->coach->id,
