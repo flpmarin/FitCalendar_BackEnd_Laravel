@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+
 class SpecificAvailabilityController extends Controller
 {
     // GET /specific-availabilities
@@ -124,5 +125,42 @@ class SpecificAvailabilityController extends Controller
         $slot->save();
 
         return response()->json(['message' => 'Bloqueada', 'specific_availability' => $slot]);
+    }
+
+    // cancelar una reservación
+    // DELETE /specific-availabilities/{id}/cancel
+    public function cancel(int $id): JsonResponse
+    {
+        $user = auth()->user();
+        if (!$user) return response()->json(['message' => 'No autenticado'], 401);
+
+        $slot = SpecificAvailability::where('id', $id)->where('is_booked', true)->first();
+        if (!$slot) return response()->json(['message' => 'No encontrada o no reservada'], 404);
+
+        $slot->is_booked = false;
+        $slot->save();
+
+        return response()->json(['message' => 'Reservación cancelada', 'specific_availability' => $slot]);
+    }
+
+    // Eliminar una disponibilidad específica
+    // DELETE /specific-availabilities/{id}
+    public function destroy(int $id): JsonResponse
+    {
+        $user = auth()->user();
+        if (!$user || !$user->coach) {
+            return response()->json(['message' => 'No autenticado o no es coach'], 401);
+        }
+
+        $slot = SpecificAvailability::find($id);
+        if (!$slot) return response()->json(['message' => 'Disponibilidad no encontrada'], 404);
+
+        if ($slot->coach_id !== $user->coach->id) {
+            return response()->json(['message' => 'No autorizado para eliminar esta disponibilidad'], 403);
+        }
+
+        $slot->delete();
+
+        return response()->json(['message' => 'Disponibilidad eliminada']);
     }
 }

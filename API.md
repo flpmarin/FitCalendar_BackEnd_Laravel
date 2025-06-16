@@ -1,24 +1,23 @@
-Tu documentación está bastante bien estructurada y clara. Solo necesita algunas **correcciones y mejoras** para reflejar fielmente el comportamiento actual de tu backend. Aquí va la versión ajustada, incluyendo:
-
-* La lógica real que aplica con `specific_availabilities`, `coach_sports`, y el precio.
-* La omisión temporal de disponibilidad recurrente (que mencionaste haber deshabilitado).
-* Correcciones menores de gramática y estructura.
-
+# FitCalendar API Documentation
+```markdown
 ---
 
-# 📘️ Documentación actualizada de la API de FitCalendar
+#  Documentación de la API de FitCalendar
 
-## 🛡️ Autenticación
+## Autenticación
 
 Todos los endpoints protegidos requieren autenticación mediante token Bearer (Laravel Sanctum).
 
-### 🔐 Login
+###  Login
 
 ```
 POST /api/login
 ```
 
 **Parámetros:**
+
+- `email` (requerido)
+- `password` (requerido)
 
 ```json
 {
@@ -35,7 +34,7 @@ POST /api/login
 }
 ```
 
-###  Registro
+### Registro
 
 ```
 POST /api/register
@@ -43,14 +42,27 @@ POST /api/register
 
 **Parámetros:**
 
-* `name`
-* `email`
-* `password`
-* `password_confirmation`
-* `role` ("Student", "Coach", "Admin")
-* `language` (opcional, por defecto `"es"`)
-* `age` (opcional)
-* `description` (opcional)
+- `name` (requerido)
+- `email` (requerido)
+- `password` (requerido)
+- `password_confirmation` (requerido)
+- `role` ("Student", "Coach", "Admin") (requerido)
+- `language` (opcional, por defecto "es") — Idioma preferido del usuario.
+- `age` (opcional) — Edad del usuario.
+- `description` (opcional) — Descripción breve del usuario.
+
+```json
+{
+  "name": "Nombre",
+  "email": "usuario@example.com",
+  "password": "password",
+  "password_confirmation": "password",
+  "role": "Coach",
+  "language": "es",
+  "age": 30,
+  "description": "Entrenador personal"
+}
+```
 
 **Respuesta:**
 
@@ -61,7 +73,7 @@ POST /api/register
 }
 ```
 
-###  Logout
+### Logout
 
 ```
 POST /api/logout
@@ -71,7 +83,7 @@ POST /api/logout
 
 ---
 
-##  Perfil de Usuario
+## Perfil de Usuario
 
 ### Obtener perfil
 
@@ -87,12 +99,19 @@ PUT /api/user/profile
 
 **Parámetros opcionales:**
 
-* `age`
-* `description`
+- `age` — Edad del usuario.
+- `description` — Descripción breve del usuario.
+
+```json
+{
+  "age": 30,
+  "description": "Me gusta el deporte"
+}
+```
 
 ---
 
-##  Perfil de Entrenador
+## Perfil de Entrenador
 
 ### Ver perfil del entrenador autenticado
 
@@ -108,18 +127,37 @@ PUT /api/coach/profile
 
 **Parámetros (todos opcionales):**
 
-* `description`
-* `city`
-* `country`
-* `coach_type`
-* `organization_id`
-* `payment_info`
+- `description` — Descripción del coach.
+- `city` — Ciudad de residencia.
+- `country` — País.
+- `coach_type` — Tipo de entrenador.
+- `organization_id` — ID de la organización (si aplica).
+- `payment_info` — Información de pago.
+
+```json
+{
+  "description": "Entrenador de natación",
+  "city": "Madrid",
+  "country": "España",
+  "coach_type": "Personal",
+  "organization_id": 2,
+  "payment_info": "IBAN ES00 0000 0000 0000"
+}
+```
 
 ### Asignar deportes al entrenador
 
 ```
 POST /api/coach/sports
 ```
+
+**Parámetros:**
+
+- `sports` (array de objetos, requerido)
+    - `id` (requerido) — ID del deporte
+    - `specific_price` (opcional) — Precio específico para este deporte
+    - `specific_location` (opcional) — Ubicación específica
+    - `session_duration_minutes` (opcional) — Duración de la sesión en minutos
 
 ```json
 {
@@ -136,7 +174,7 @@ POST /api/coach/sports
 
 ---
 
-##  Disponibilidad puntual
+## Disponibilidad puntual
 
 > Actualmente la disponibilidad recurrente está desactivada.
 
@@ -146,11 +184,28 @@ POST /api/coach/sports
 GET /api/specific-availabilities
 ```
 
+**Parámetros de consulta opcionales:**
+
+- `coach_id` — Filtra por entrenador.
+- `sport_id` — Filtra por deporte.
+- `date` — Filtra por fecha (formato `YYYY-MM-DD`).
+- `is_online` — Filtra por modalidad online (`true`/`false`).
+
 ### Crear nueva disponibilidad puntual
 
 ```
 POST /api/specific-availabilities
 ```
+
+**Parámetros:**
+
+- `sport_id` (requerido)
+- `date` (requerido, formato `YYYY-MM-DD`)
+- `start_time` (requerido, formato `HH:mm`)
+- `end_time` (requerido, formato `HH:mm`)
+- `is_online` (requerido, booleano)
+- `location` (opcional) — Lugar físico de la sesión.
+- `capacity` (opcional, por defecto 1) — Número máximo de participantes.
 
 ```json
 {
@@ -166,9 +221,9 @@ POST /api/specific-availabilities
 
 ---
 
-##  Reservas
+## Reservas
 
-###  Buscar entrenadores con disponibilidad
+### Buscar entrenadores con disponibilidad
 
 ```
 GET /api/available-coaches
@@ -176,7 +231,7 @@ GET /api/available-coaches
 
 > Devuelve entrenadores que tienen al menos una disponibilidad puntual futura sin reservar.
 
-###  Listar reservas del usuario
+### Listar reservas del usuario
 
 ```
 GET /api/bookings
@@ -192,6 +247,11 @@ POST /api/bookings
 
 **Parámetros:**
 
+- `coach_id` (requerido)
+- `sport_id` (requerido)
+- `specific_availability_id` (requerido)
+- `session_at` (requerido, formato `YYYY-MM-DDTHH:mm:ssZ`)
+
 ```json
 {
   "coach_id": 1,
@@ -205,19 +265,21 @@ POST /api/bookings
 
 > El precio se calcula desde `coach_sports.specific_price` si existe, o se usa `35 EUR` por defecto.
 
-###  Ver detalle de una reserva
+### Ver detalle de una reserva
 
 ```
 GET /api/bookings/{id}
 ```
 
-###  Cancelar una reserva
+### Cancelar una reserva
 
 ```
 PATCH /api/bookings/{id}/cancel
 ```
 
-**Parámetro requerido:**
+**Parámetros:**
+
+- `cancelled_reason` (requerido) — Motivo de la cancelación.
 
 ```json
 {
@@ -227,7 +289,7 @@ PATCH /api/bookings/{id}/cancel
 
 > Solo puede cancelarse si no ha pasado la fecha de la sesión.
 
-###  Marcar como pagada (solo para coaches)
+### Marcar como pagada (solo para coaches)
 
 ```
 PATCH /api/bookings/{id}/mark-as-paid
@@ -237,7 +299,7 @@ PATCH /api/bookings/{id}/mark-as-paid
 
 ---
 
-##  Health Check
+## Health Check
 
 ```
 GET /api/health
@@ -247,11 +309,11 @@ GET /api/health
 
 ---
 
-##  Notas para Postman / entorno de pruebas
+## Notas para Postman / entorno de pruebas
 
-* Base URL: `https://fitcalendarbackendlaravel-production.up.railway.app`
-* Autenticación: `Authorization: Bearer {{token}}`
-* Headers comunes:
+- Base URL: `https://fitcalendarbackendlaravel-production.up.railway.app`
+- Autenticación: `Authorization: Bearer {{token}}`
+- Headers comunes:
 
 ```http
 Accept: application/json
@@ -262,8 +324,9 @@ Authorization: Bearer {{token}}
 
 ## 🔮 En desarrollo / pendientes
 
-* `/api/coach/{id}/reviews`
-* `/api/payments/...`
-* `/api/admin/...`
+- `/api/coach/{id}/reviews`
+- `/api/payments/...`
+- `/api/admin/...`
 
 ---
+```

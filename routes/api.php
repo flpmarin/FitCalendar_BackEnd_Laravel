@@ -83,6 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Disponibilidad puntual
     Route::post('/specific-availabilities',               [SpecificAvailabilityController::class, 'store']);
     Route::patch('/specific-availabilities/{id}/book',    [SpecificAvailabilityController::class, 'book']);
+    Route::delete('/specific-availabilities/{id}',        [SpecificAvailabilityController::class, 'destroy']);
 
     // Reservas
     Route::apiResource('bookings', BookingController::class)->except(['update', 'destroy']);
