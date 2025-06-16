@@ -11,6 +11,7 @@ use App\Http\Controllers\API\BookingController;
 use App\Http\Controllers\API\AvailabilitySlotController;
 use App\Http\Controllers\API\CoachController;
 use App\Http\Controllers\API\SpecificAvailabilityController;
+use App\Http\Controllers\API\SportController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +64,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Endpoints públicos (no requieren autenticación)
 Route::get('/coaches/{coachId}/availability-slots', [AvailabilitySlotController::class, 'getByCoach']);
 Route::get('/available-coaches', [BookingController::class, 'getAvailableCoaches']);
+Route::get('/sports', [CoachController::class, 'index']);
 
 
 // Rutas protegidas que requieren autenticación
