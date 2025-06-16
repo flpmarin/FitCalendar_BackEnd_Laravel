@@ -64,7 +64,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Endpoints públicos (no requieren autenticación)
 Route::get('/coaches/{coachId}/availability-slots', [AvailabilitySlotController::class, 'getByCoach']);
 Route::get('/available-coaches', [BookingController::class, 'getAvailableCoaches']);
-Route::get('/sports', [CoachController::class, 'index']);
+Route::get('/sports', [SportController::class, 'index']);
 
 
 // Rutas protegidas que requieren autenticación
