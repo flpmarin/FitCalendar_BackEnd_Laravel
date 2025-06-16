@@ -190,7 +190,6 @@ DELETE /api/coach/sports/{sportId}
 {
   "message": "Deporte eliminado correctamente",
   "coach": {
-    /* datos actualizados del coach, incluyendo la lista de deportes */
   }
 }
 ```
@@ -236,7 +235,8 @@ POST /api/specific-availabilities
 - `is_online` (requerido, booleano)
 - `location` (opcional) — Lugar físico de la sesión.
 - `capacity` (opcional, por defecto 1) — Número máximo de participantes.
-
+- **Posibles respuestas:**
+- **Exito:**
 ```json
 {
   "sport_id": 1,
@@ -246,6 +246,12 @@ POST /api/specific-availabilities
   "is_online": false,
   "location": "Gimnasio",
   "capacity": 4
+}
+```
+- **Error (Si el coach no tiene el deporte asociado):**
+```json
+{
+    "message": "No puedes crear disponibilidad para un deporte que no tienes asignado."
 }
 ```
 
