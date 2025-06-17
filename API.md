@@ -189,7 +189,7 @@ DELETE /api/coach/sports/{sportId}
 ```json
 {
   "message": "Deporte eliminado correctamente",
-  "coach": {} 
+  "coach": {}
 }
 ```
 *(datos actualizados del coach, incluyendo la lista de deportes )
