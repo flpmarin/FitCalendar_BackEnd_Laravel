@@ -109,7 +109,7 @@ class CoachController extends Controller
             ];
         }
 
-        $user->coach->sports()->sync($sportsData);
+        $user->coach->sports()->syncWithoutDetaching($sportsData);
 
         return response()->json([
             'message' => 'Deportes asignados correctamente',
