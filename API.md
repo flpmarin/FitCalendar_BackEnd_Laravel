@@ -238,13 +238,13 @@ POST /api/specific-availabilities
 - **Exito:**
 ```json
 {
-  "sport_id": 1,
-  "date": "2025-07-01",
-  "start_time": "10:00",
-  "end_time": "11:00",
-  "is_online": false,
-  "location": "Gimnasio",
-  "capacity": 4
+    "message": "Disponibilidad creada",
+    "specific_availability": {
+        "id": 123,
+        "date": "2025-07-01",
+        "start_time": "10:00",
+        "end_time": "11:00"
+    }
 }
 ```
 - **Error (Si el coach no tiene el deporte asociado):**
