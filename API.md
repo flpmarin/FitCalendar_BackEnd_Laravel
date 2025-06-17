@@ -189,10 +189,10 @@ DELETE /api/coach/sports/{sportId}
 ```json
 {
   "message": "Deporte eliminado correctamente",
-  "coach": {}
+  "coach": {} 
 }
 ```
-El campo coach contiene los datos actualizados del entrenador, incluyendo la lista de deportes asignados.
+*(datos actualizados del coach, incluyendo la lista de deportes )
 - **Error (disponibilidades asociadas):**
 ```json
 {
@@ -234,7 +234,8 @@ POST /api/specific-availabilities
 - `is_online` (requerido, booleano)
 - `location` (opcional) — Lugar físico de la sesión.
 - `capacity` (opcional, por defecto 1) — Número máximo de participantes.
-
+- **Posibles respuestas:**
+- **Exito:**
 ```json
 {
   "sport_id": 1,
@@ -250,6 +251,21 @@ POST /api/specific-availabilities
 ```json
 {
     "message": "No puedes crear disponibilidad para un deporte que no tienes asignado."
+}
+```
+### Actualizar una disponibilidad puntual
+```
+PATCH /api/specific-availabilities/{id}
+```
+```json
+{
+  "sport_id": 1,
+  "date": "2025-07-01",
+  "start_time": "10:00",
+  "end_time": "11:00",
+  "is_online": false,
+  "location": "Nuevo Local",
+  "capacity": 6
 }
 ```
 
