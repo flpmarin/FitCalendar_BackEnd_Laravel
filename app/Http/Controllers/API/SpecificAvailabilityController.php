@@ -170,4 +170,51 @@ class SpecificAvailabilityController extends Controller
 
         return response()->json(['message' => 'Disponibilidad eliminada']);
     }
+
+    // Actualizar una disponibilidad específica
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $user = auth()->user();
+        if (!$user || !$user->coach) {
+            return response()->json(['message' => 'No autenticado o no es coach'], 401);
+        }
+
+        $slot = SpecificAvailability::find($id);
+        if (!$slot) return response()->json(['message' => 'Disponibilidad no encontrada'], 404);
+        if ($slot->coach_id !== $user->coach->id) {
+            return response()->json(['message' => 'No autorizado para actualizar esta disponibilidad'], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'date'       => 'sometimes|date|after_or_equal:today',
+            'start_time' => 'sometimes|string',
+            'end_time'   => 'sometimes|string',
+            'is_online'  => 'sometimes|boolean',
+            'location'   => 'nullable|string|max:255',
+            'capacity'   => 'nullable|integer|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => 'Datos inválidos', 'errors' => $validator->errors()], 422);
+        }
+
+        // Validar horas si se actualizan ambas
+        if ($request->has(['start_time', 'end_time'])) {
+            try {
+                $startTime = \Carbon\Carbon::parse($request->start_time)->format('H:i:s');
+                $endTime   = \Carbon\Carbon::parse($request->end_time)->format('H:i:s');
+                if ($endTime <= $startTime) {
+                    return response()->json(['message' => 'La hora de fin debe ser posterior a la de inicio'], 422);
+                }
+            } catch (\Exception $e) {
+                return response()->json(['message' => 'Formato de hora inválido'], 422);
+            }
+        }
+
+        $slot->update($request->only([
+            'date', 'start_time', 'end_time', 'is_online', 'location', 'capacity'
+        ]));
+
+        return response()->json(['message' => 'Disponibilidad actualizada', 'specific_availability' => $slot]);
+    }
 }

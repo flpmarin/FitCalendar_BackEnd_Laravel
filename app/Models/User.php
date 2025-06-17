@@ -60,7 +60,7 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * Get the bookings for the user.
+     * Obtiene las reservas asociadas a este usuario.
      */
     public function bookings(): HasMany
     {
