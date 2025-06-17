@@ -34,7 +34,7 @@ class BookingController extends Controller
     public function store(Request $request): JsonResponse
     {
         $user = auth()->user();
-        if (auth()->user()->role !== 'Estudiante') {
+        if (auth()->user()->role !== 'Student') {
             abort(403, 'Solo los estudiantes pueden crear reservas.');
         }
         if (!$user) return response()->json(['message' => 'No autenticado'], 401);
